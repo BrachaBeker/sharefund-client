@@ -1,0 +1,127 @@
+/* טוענים את Tailwind: כל מחלקות העיצוב (bg-, text-, p- וכו') זמינות בקוד */
+@import "tailwindcss";
+
+/* ערכי עיצוב קבועים לכל האתר. Tailwind יוצר מהם מחלקות, למשל font-sans */
+@theme {
+  /* הגופן הראשי: Heebo, ואם הוא לא נטען – גופן המערכת */
+  --font-sans: "Heebo", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* עיצוב בסיסי לכל העמוד */
+@layer base {
+  /* רקע אפור-בהיר לכל העמוד, וטקסט כהה */
+  body {
+    /* הגופן, צבע הרקע וצבע הטקסט */
+    @apply bg-slate-100 font-sans text-slate-800 antialiased;
+  }
+}
+
+/* כפתור: הבסיס לכל סוגי הכפתורים. מוגדר כ-@utility כדי שאפשר יהיה לשלב אותו (@apply btn) בסוגי הכפתורים */
+@utility btn {
+  /* תוכן ממורכז, ריווח, פינות, גופן מודגש ומעבר צבע רך */
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+    focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+/* מחלקות משותפות שחוזרות בכל העמודים, כדי לא לכתוב את אותה רשימת מחלקות שוב ושוב */
+@layer components {
+  /* כרטיס: קופסה לבנה עם פינות מעוגלות וצל עדין */
+  .card {
+    /* רקע לבן, פינות, מסגרת דקה, צל וריווח פנימי */
+    @apply rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6;
+  }
+
+  /* כפתור ראשי: הפעולה החשובה בעמוד */
+  .btn-primary {
+    /* רקע טורקיז, טקסט לבן, וכהה יותר במעבר עכבר */
+    @apply btn bg-teal-600 text-white shadow-sm hover:bg-teal-700 focus-visible:outline-teal-600;
+  }
+  /* כפתור משני: פעולה רגילה */
+  .btn-secondary {
+    /* רקע לבן עם מסגרת */
+    @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:outline-slate-400;
+  }
+  /* כפתור מסוכן: מחיקה, הסרה, סגירה */
+  .btn-danger {
+    /* רקע אדום וטקסט לבן */
+    @apply btn bg-rose-600 text-white shadow-sm hover:bg-rose-700 focus-visible:outline-rose-600;
+  }
+  /* כפתור שקוף: קישור שנראה כמו כפתור קטן */
+  .btn-ghost {
+    /* בלי רקע, ורקע עדין במעבר עכבר */
+    @apply btn px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  }
+  /* כפתור קטן: לפעולות בתוך שורה של טבלה */
+  .btn-sm {
+    /* ריווח וגופן קטנים יותר */
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  /* תווית מעל שדה בטופס */
+  .label {
+    /* גופן קטן ומודגש, ורווח מתחת */
+    @apply mb-1.5 block text-sm font-medium text-slate-700;
+  }
+  /* שדה קלט, רשימה נפתחת ותיבת טקסט */
+  .input {
+    /* רוחב מלא, מסגרת, פינות, ומסגרת טורקיז כשהשדה בפוקוס */
+    @apply block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-xs
+      placeholder:text-slate-400 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/15 focus:outline-none
+      disabled:bg-slate-100 disabled:text-slate-500;
+  }
+  /* הודעת שגיאה מתחת לשדה */
+  .field-error {
+    /* טקסט אדום קטן */
+    @apply mt-1 text-xs font-medium text-rose-600;
+  }
+
+  /* תג קטן: תפקיד, סטטוס, "חדש" */
+  .badge {
+    /* צורה של גלולה עם גופן קטן */
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+
+  /* העוטף של כל טבלה: בטלפון גוללים לרוחב בתוך הטבלה ולא את כל העמוד.
+     relative: גם אלמנטים במיקום absolute בתוך הטבלה (כמו sr-only) נשארים בתוך העוטף ולא מרחיבים את העמוד */
+  .table-wrap {
+    /* מיקום יחסי וגלילה לרוחב */
+    @apply relative overflow-x-auto;
+  }
+
+  /* טבלה: כותרות אפורות ושורות עם קו מפריד */
+  .table {
+    /* רוחב מלא וטקסט קטן */
+    @apply w-full text-sm;
+  }
+  /* תא כותרת */
+  .table th {
+    /* רקע אפור, טקסט אפור קטן, יישור לימין (תחילת השורה) */
+    @apply bg-slate-50 px-4 py-3 text-start text-xs font-semibold whitespace-nowrap text-slate-500;
+  }
+  /* תא רגיל */
+  .table td {
+    /* ריווח וקו מפריד מעל כל שורה */
+    @apply border-t border-slate-100 px-4 py-3 align-middle;
+  }
+  /* שורה במעבר עכבר */
+  .table tbody tr {
+    /* רקע עדין כשהעכבר מעל השורה */
+    @apply transition hover:bg-slate-50/70;
+  }
+}
+
+/* מחלקות עזר לצבע לפי סכום (משמשות את amountClass ב-utils/format.ts) */
+@layer utilities {
+  /* סכום חיובי: ירוק */
+  .positive {
+    @apply text-emerald-600;
+  }
+  /* סכום שלילי: אדום */
+  .negative {
+    @apply text-rose-600;
+  }
+  /* סכום אפס: אפור */
+  .zero {
+    @apply text-slate-500;
+  }
+}

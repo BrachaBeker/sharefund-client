@@ -1,0 +1,25 @@
+# הגדרת ההעלאה של האתר (ה-client) ל-Render, בשיטת Blueprint.
+# ב-Render: New ← Blueprint ← בוחרים את המאגר של ה-client, ו-Render קורא את הקובץ הזה וממלא הכול לבד.
+services:
+  # אתר סטטי: קבצי HTML, CSS ו-JS שנבנו מראש (אין שרת Node)
+  - type: web
+    # השם של השירות ב-Render, וממנו גם הכתובת: https://sharefund-client.onrender.com
+    name: sharefund-client
+    # static: אתר סטטי
+    runtime: static
+    # הפקודה שבונה את האתר: התקנת הספריות ובנייה (tsc + vite build)
+    buildCommand: npm install && npm run build
+    # התיקייה שנוצרת בבנייה, וממנה מוגש האתר
+    staticPublishPath: ./dist
+    # משתני הסביבה בזמן הבנייה
+    envVars:
+      # כתובת השרת. Vite מכניס אותה לקוד בזמן הבנייה
+      - key: VITE_API_URL
+        value: https://sharefund-server.onrender.com/api
+    # כללי ניתוב
+    routes:
+      # כל כתובת (למשל /group/1/dashboard) מחזירה את index.html, ו-React Router מציג את העמוד הנכון.
+      # בלי זה, רענון באמצע עמוד מחזיר 404
+      - type: rewrite
+        source: /*
+        destination: /index.html
