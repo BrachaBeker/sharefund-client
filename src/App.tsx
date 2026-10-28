@@ -1,9 +1,6 @@
 import AppRoutes from "./routes/AppRoutes"
 import Header from "./components/Header"
 
-// השנה הנוכחית לשורה התחתונה. מחושבת פעם אחת בטעינה, ולא בכל ציור מחדש
-const YEAR = new Date().getFullYear()
-
 // המבנה של כל עמוד: Header למעלה, התוכן באמצע, ושורה תחתונה
 const App = () => {
     return (
@@ -13,7 +10,7 @@ const App = () => {
                 <AppRoutes />
             </main>
             <footer className="border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-400">
-                © {YEAR} ShareFund · כל הזכויות שמורות לברכי בקר
+                ShareFund · ניהול קופה משותפת בקלות · כל הזכויות שמורות לברכי בקר ©
             </footer>
         </div>
     )
