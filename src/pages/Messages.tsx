@@ -9,6 +9,7 @@ import { useMembers } from "../hooks/useMembers"
 import { formatDateTime } from "../utils/format"
 import { boxNames } from "../utils/labels"
 import { getErrorMessage } from "../utils/errors"
+import { gradientFor } from "../utils/colors"
 import { messageRules } from "../utils/validation"
 import PageHeader from "../components/ui/PageHeader"
 import Alert from "../components/ui/Alert"
@@ -76,8 +77,8 @@ const Messages = () => {
 
                     {data && data.items.length > 0 && (
                         <ul className="space-y-3">
-                            {data.items.map((message) => (
-                                <li key={message.id}>
+                            {data.items.map((message, index) => (
+                                <li key={message.id} className="row-in" style={{ animationDelay: `${index * 50}ms` }}>
                                     <MessageCard message={message} isOpen={openId === message.id} onToggle={() => toggleMessage(message)} />
                                 </li>
                             ))}
@@ -105,22 +106,25 @@ const MessageCard = ({ message, isOpen, onToggle }: MessageCardProps) => {
             type="button"
             onClick={onToggle}
             aria-expanded={isOpen}
-            className={`card block w-full cursor-pointer p-4 text-start transition hover:border-slate-300 sm:p-5 ${isNew ? "border-s-4 border-s-brand-600" : ""}`}
+            className={`card card-link group block w-full cursor-pointer p-5 text-start sm:p-5 ${isNew ? "bg-brand-50/60 ring-2 ring-brand-200" : ""}`}
         >
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
                 {isSent
-                    ? <span className="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500"><Icon name="send" className="size-4" /></span>
-                    : <Avatar name={message.sender.name} />}
+                    ? <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-slate-100 text-slate-500 transition group-hover:bg-brand-100 group-hover:text-brand-600"><Icon name="send" className="size-5" /></span>
+                    : <Avatar name={message.sender.name} className={`size-11 rounded-2xl bg-linear-to-br text-base text-white shadow-md transition duration-300 group-hover:-rotate-6 ${gradientFor(message.sender.name)}`} />}
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <p className={`text-sm ${isNew ? "font-semibold text-slate-900" : "font-medium text-slate-700"}`}>
+                        <p className={isNew ? "font-bold text-ink" : "font-semibold text-slate-700"}>
                             {isSent ? `אל: ${message.toAll ? "כל הקבוצה" : message.recipients?.map((r) => r.name).join(", ")}` : message.sender.name}
                         </p>
                         {isNew && <span className="badge bg-brand-600 text-white">חדש</span>}
                         {!isSent && message.toAll && <span className="badge bg-slate-100 text-slate-500">לכל הקבוצה</span>}
-                        <span className="ms-auto text-xs text-slate-400">{formatDateTime(message.createdAt)}</span>
+                        <span className="ms-auto flex items-center gap-1 text-xs text-slate-400">
+                            {formatDateTime(message.createdAt)}
+                            <Icon name="chevronDown" className={`size-4 transition duration-300 ${isOpen ? "rotate-180 text-brand-600" : ""}`} />
+                        </span>
                     </div>
-                    <p className={`mt-1.5 text-sm whitespace-pre-wrap text-slate-600 ${isOpen ? "" : "line-clamp-2"}`}>{message.content}</p>
+                    <p className={`mt-2 leading-relaxed whitespace-pre-wrap text-slate-600 ${isOpen ? "" : "line-clamp-2"}`}>{message.content}</p>
 
                     {isSent && isOpen && message.recipients && (
                         <div className="mt-3 flex flex-wrap gap-1.5 border-t border-slate-100 pt-3">
@@ -190,23 +194,45 @@ const ComposeMessage = ({ groupId, isManager, managerName }: ComposeMessageProps
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="card space-y-4">
-            <h2 className="card-title">הודעה חדשה</h2>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="card relative isolate space-y-5 overflow-hidden">
+            <span className="absolute -top-16 -left-16 -z-10 size-48 rounded-full bg-brand-100/70 blur-2xl" />
+            <div className="flex items-center gap-3">
+                <span className="grid size-11 place-items-center rounded-2xl bg-linear-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-600/30"><Icon name="mail" className="size-5" /></span>
+                <div>
+                    <h2 className="card-title">הודעה חדשה</h2>
+                    <p className="text-sm text-slate-500">{isManager ? "לכל הקבוצה או לחברים נבחרים" : "ישירות למנהל/ת הקבוצה"}</p>
+                </div>
+            </div>
 
-            {!isManager && <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">ההודעה תישלח למנהל/ת: <strong className="font-medium">{managerName}</strong></p>}
+            {!isManager && (
+                <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
+                    <Avatar name={managerName} className={`size-9 rounded-xl bg-linear-to-br text-sm text-white ${gradientFor(managerName)}`} />
+                    <p className="text-sm text-slate-600">אל: <strong className="font-semibold text-ink">{managerName}</strong></p>
+                </div>
+            )}
 
             {isManager && (
                 <div className="space-y-3">
                     <Segmented label="נמענים" options={recipientModeOptions} value={recipientMode} onChange={changeRecipientMode} className="flex w-full" />
                     {recipientMode === "selected" && (
-                        <div className="max-h-52 space-y-1 overflow-y-auto rounded-lg border border-slate-200 p-2">
+                        <div className="pop-in flex max-h-52 flex-wrap gap-2 overflow-y-auto">
                             {recipientOptions.length === 0 && <p className="p-2 text-sm text-slate-400">טוען חברים...</p>}
-                            {recipientOptions.map((member) => (
-                                <label key={member.userId} className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-slate-50">
-                                    <input type="checkbox" checked={recipientIds.includes(member.userId)} onChange={() => toggleRecipient(member.userId)} className="size-4 accent-brand-600" />
-                                    <span className="text-sm text-slate-700">{member.name}</span>
-                                </label>
-                            ))}
+                            {recipientOptions.map((member) => {
+                                const isChosen = recipientIds.includes(member.userId)
+                                return (
+                                    <button
+                                        key={member.userId}
+                                        type="button"
+                                        onClick={() => toggleRecipient(member.userId)}
+                                        aria-pressed={isChosen}
+                                        className={`flex cursor-pointer items-center gap-2 rounded-full border-2 py-1 ps-1 pe-3 text-sm font-medium transition duration-200 active:scale-95 ${isChosen ? "border-brand-600 bg-brand-50 text-brand-700" : "border-slate-200 text-slate-600 hover:border-brand-300"}`}
+                                    >
+                                        <Avatar name={member.name} className={`size-7 text-xs text-white ${isChosen ? "bg-brand-600" : `bg-linear-to-br ${gradientFor(member.name)}`}`} />
+                                        {member.name}
+                                        {isChosen && <Icon name="check" className="size-3.5" />}
+                                    </button>
+                                )
+                            })}
                         </div>
                     )}
                     {recipientsError && <p className="field-error">{recipientsError}</p>}
@@ -215,7 +241,7 @@ const ComposeMessage = ({ groupId, isManager, managerName }: ComposeMessageProps
 
             <div>
                 <label htmlFor="message-content" className="label">תוכן ההודעה</label>
-                <textarea id="message-content" rows={5} maxLength={1000} placeholder="כתבו כאן..." className="input resize-y" {...register("content", messageRules)} />
+                <textarea id="message-content" rows={5} maxLength={1000} placeholder="כתבו כאן..." className="input resize-y bg-white" {...register("content", messageRules)} />
                 <div className="mt-1 flex justify-between text-xs">
                     <span className="font-medium text-rose-600">{errors.content?.message}</span>
                     <span className="text-slate-400">{length}/1000</span>
@@ -225,8 +251,8 @@ const ComposeMessage = ({ groupId, isManager, managerName }: ComposeMessageProps
             {mutation.isError && <Alert>{getErrorMessage(mutation.error)}</Alert>}
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
-            <button type="submit" disabled={mutation.isPending} className="btn-primary w-full">
-                <Icon name="send" className="size-4" />
+            <button type="submit" disabled={mutation.isPending} className="btn-primary group/send w-full py-3">
+                <Icon name="send" className="size-4 transition duration-300 group-hover/send:-translate-x-1 group-hover/send:-rotate-12" />
                 {mutation.isPending ? "שולח..." : "שליחה"}
             </button>
         </form>

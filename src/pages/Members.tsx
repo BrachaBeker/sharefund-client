@@ -9,6 +9,7 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue"
 import { amountClass, formatDate, formatMoney } from "../utils/format"
 import { getErrorMessage } from "../utils/errors"
 import { balanceStatusNames } from "../utils/labels"
+import { gradientFor } from "../utils/colors"
 import AddMemberForm from "../components/AddMemberForm"
 import BulkTransactions from "../components/BulkTransactions"
 import ConfirmDialog from "../components/ConfirmDialog"
@@ -20,6 +21,7 @@ import SearchInput from "../components/ui/SearchInput"
 import RoleBadge from "../components/ui/RoleBadge"
 import Avatar from "../components/ui/Avatar"
 import Segmented from "../components/ui/Segmented"
+import ColorTile from "../components/ui/ColorTile"
 import { EmptyState, ErrorState, LoadingState } from "../components/ui/PageState"
 
 type BalanceFilter = NonNullable<MembersFilters["balanceStatus"]> | "all"
@@ -49,7 +51,11 @@ const Members = () => {
     }
 
     const { data: members, isLoading, isError, error } = useMembers(groupId, isManager ? filters : {})
-    const { data: allMembers } = useMembers(groupId, {}, isManager && openPanel === "bulk")
+    // כל החברים בלי סינון: לסיכום שבראש העמוד ולרישום המרוכז
+    const { data: allMembers } = useMembers(groupId, {}, isManager)
+    const everyone = (allMembers ?? []) as MemberFull[]
+    const inCredit = everyone.filter((member) => member.balance > 0)
+    const inDebt = everyone.filter((member) => member.balance < 0)
 
     const removeMutation = useMutation({
         mutationFn: removeMember,
@@ -108,12 +114,20 @@ const Members = () => {
             {isError && <ErrorState title="לא ניתן לטעון את רשימת החברים" text={getErrorMessage(error)} />}
             {isLoading && <LoadingState text="טוען חברים..." />}
 
+            {isManager && allMembers && (
+                <div className="mb-6 grid grid-cols-3 gap-3 sm:gap-5">
+                    <ColorTile tone="purple" icon="users" label="חברים" value={String(everyone.length)} hint={`מנהל: ${group.managerName}`} />
+                    <ColorTile tone="green" icon="arrowDown" label="בזכות" value={String(inCredit.length)} hint={`יחד ${formatMoney(inCredit.reduce((sum, member) => sum + member.balance, 0))}`} />
+                    <ColorTile tone="orange" icon="warning" label="בחוב" value={String(inDebt.length)} hint={inDebt.length ? `יחד ${formatMoney(-inDebt.reduce((sum, member) => sum + member.balance, 0))}` : "אין חובות, כל הכבוד!"} />
+                </div>
+            )}
+
             {members && !isManager && (
                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {(members as MemberBasic[]).map((member, index) => (
-                        <li key={`${member.name}-${index}`} className="card flex items-center gap-3 p-4 sm:p-4">
-                            <Avatar name={member.name} />
-                            <span className="flex-1 font-medium text-slate-800">{member.name}</span>
+                        <li key={`${member.name}-${index}`} className="card row-in flex items-center gap-3 p-4 sm:p-4" style={{ animationDelay: `${index * 60}ms` }}>
+                            <Avatar name={member.name} className={`size-10 bg-linear-to-br text-sm text-white ${gradientFor(member.name)}`} />
+                            <span className="flex-1 font-semibold text-ink">{member.name}</span>
                             <RoleBadge role={member.role} />
                         </li>
                     ))}
@@ -142,20 +156,20 @@ const Members = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(members as MemberFull[]).map((member) => (
-                                        <tr key={member.userId}>
+                                    {(members as MemberFull[]).map((member, index) => (
+                                        <tr key={member.userId} className="row-in" style={{ animationDelay: `${index * 50}ms` }}>
                                             <td>
                                                 <div className="flex items-center gap-3 whitespace-nowrap">
-                                                    <Avatar name={member.name} />
+                                                    <Avatar name={member.name} className={`size-10 bg-linear-to-br text-sm text-white ${gradientFor(member.name)}`} />
                                                     <div>
-                                                        <p className="font-medium text-slate-800">{member.name}</p>
+                                                        <p className="font-semibold text-ink">{member.name}</p>
                                                         <p className="text-xs text-slate-400 sm:hidden" dir="ltr">{member.email}</p>
                                                         <RoleBadge role={member.role} />
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="hidden whitespace-nowrap text-slate-500 sm:table-cell" dir="ltr">{member.email}</td>
-                                            <td className={`font-semibold whitespace-nowrap tabular-nums ${amountClass(member.balance)}`}>{formatMoney(member.balance)}</td>
+                                            <td className="hidden whitespace-nowrap text-slate-500 sm:table-cell"><span dir="ltr">{member.email}</span></td>
+                                            <td className={`text-base font-bold whitespace-nowrap tabular-nums ${amountClass(member.balance)}`}>{formatMoney(member.balance)}</td>
                                             <td className="hidden whitespace-nowrap text-slate-500 md:table-cell">{formatDate(member.joinedAt)}</td>
                                             <td>
                                                 {member.role === "member" && (
@@ -165,17 +179,17 @@ const Members = () => {
                                                             <span className="hidden sm:inline">איפוס סיסמה</span>
                                                         </button>
                                                         {group.isActive && (member.balance === 0 ? (
-                                                            <button type="button" onClick={() => askRemove(member)} className="btn-secondary btn-sm text-rose-600 hover:bg-rose-50" title="הסרה">
+                                                            <button type="button" onClick={() => askRemove(member)} className="btn-secondary btn-sm text-rose-600 hover:border-rose-400! hover:text-rose-700!" title="הסרה">
                                                                 <Icon name="trash" className="size-4" />
                                                                 <span className="hidden sm:inline">הסרה</span>
                                                             </button>
                                                         ) : (
                                                             <span
-                                                                className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1 text-xs whitespace-nowrap text-slate-500"
+                                                                className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-xs whitespace-nowrap text-slate-500"
                                                                 title="אפשר להסיר רק חבר שהיתרה שלו 0. כדי להסיר, אפסו קודם את היתרה ברישום המרוכז."
                                                             >
                                                                 <Icon name="lock" className="size-3.5" />
-                                                                הסרה ביתרה 0
+                                                                <span className="hidden sm:inline">הסרה ביתרה 0</span>
                                                             </span>
                                                         ))}
                                                     </div>

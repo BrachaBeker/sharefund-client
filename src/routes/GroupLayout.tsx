@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { Link, Outlet, useParams } from "react-router-dom"
+import { Link, Outlet, useLocation, useParams } from "react-router-dom"
 import { getMyGroup } from "../services/api"
 import { queryKeys } from "../services/queryKeys"
 import { getErrorMessage } from "../utils/errors"
@@ -10,6 +10,7 @@ import type { CurrentGroup } from "../hooks/useCurrentGroup"
 // בודק את ה-id, טוען את הקבוצה פעם אחת ומטפל בטעינה ובשגיאה, כדי שכל עמוד לא יעשה את זה שוב.
 const GroupLayout = () => {
     const groupId = Number(useParams().id)
+    const { pathname } = useLocation()
     const isValidId = Number.isInteger(groupId) && groupId > 0
 
     const { data: group, isLoading, isError, error } = useQuery({
@@ -24,7 +25,11 @@ const GroupLayout = () => {
     if (isLoading) return <LoadingState text="טוען את הקבוצה..." />
     if (isError || !group) return <ErrorState title="לא ניתן לפתוח את הקבוצה" text={getErrorMessage(error)} action={backToGroups} />
 
-    return <Outlet context={{ groupId, group } satisfies CurrentGroup} />
+    return (
+        <div key={pathname} className="page-enter">
+            <Outlet context={{ groupId, group } satisfies CurrentGroup} />
+        </div>
+    )
 }
 
 export default GroupLayout

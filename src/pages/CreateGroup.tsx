@@ -196,7 +196,7 @@ const SectionTitle = ({ step, title, text, link }: SectionTitleProps) => (
         <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700 ring-1 ring-brand-200">{step}</span>
         <div>
             <h2 className="card-title">{title}</h2>
-            {text && <p className="text-sm text-slate-500">{text}{link && <> <Link to="/login" className="font-semibold text-brand-700 hover:underline">להתחבר</Link>.</>}</p>}
+            {text && <p className="text-sm text-slate-500">{text}{link && <> <Link to="/login" className="link">להתחבר</Link>.</>}</p>}
         </div>
     </div>
 )

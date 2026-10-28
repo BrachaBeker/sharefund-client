@@ -1,7 +1,8 @@
-// סמל האתר: ריבוע כחול עם ₪. משמש ב-Header ובעמודי הכניסה
+// סמל האתר: ריבוע סגול עם ₪ ומטבע כתום בפינה. משמש ב-Header ובעמודי הכניסה
 const LogoMark = ({ className = "size-8 text-base" }: { className?: string }) => (
-    <span className={`grid shrink-0 place-items-center rounded-lg bg-brand-600 font-bold text-white ${className}`} aria-hidden="true">
+    <span className={`relative grid shrink-0 place-items-center rounded-xl bg-linear-to-br from-brand-500 to-indigo-700 font-bold text-white shadow-md shadow-brand-600/30 ${className}`} aria-hidden="true">
         ₪
+        <span className="absolute -end-1 -top-1 size-[30%] rounded-full bg-accent-400 ring-2 ring-white" />
     </span>
 )
 

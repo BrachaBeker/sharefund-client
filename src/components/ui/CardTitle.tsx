@@ -11,7 +11,7 @@ const CardTitle = ({ title, subtitle, actions }: CardTitleProps) => (
     <div className="mb-5 flex items-start justify-between gap-3">
         <div>
             <h2 className="card-title">{title}</h2>
-            {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
+            {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
         </div>
         {actions}
     </div>

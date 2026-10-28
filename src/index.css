@@ -1,56 +1,101 @@
 @import "tailwindcss";
 
-/* צבע המותג (כחול) וגופן האתר. Tailwind יוצר מהם מחלקות כמו bg-brand-600 ו-font-sans */
+/* צבע המותג (סגול-כחול), צבע משני (כתום) וגופן האתר. Tailwind יוצר מהם מחלקות כמו bg-brand-600 ו-text-accent-500 */
 @theme {
-  --font-sans: "Heebo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Rubik", ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bfdbfe;
-  --color-brand-300: #93c5fd;
-  --color-brand-400: #60a5fa;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-800: #1e40af;
-  --color-brand-900: #1e3a8a;
+  --color-brand-50: #eef0ff;
+  --color-brand-100: #e0e3ff;
+  --color-brand-200: #c7cbfe;
+  --color-brand-300: #a4a8fc;
+  --color-brand-400: #8180f8;
+  --color-brand-500: #6a62f1;
+  --color-brand-600: #5847e5;
+  --color-brand-700: #4a39ca;
+  --color-brand-800: #3d31a3;
+  --color-brand-900: #352f81;
+
+  --color-accent-50: #fff5ed;
+  --color-accent-100: #ffe8d4;
+  --color-accent-200: #ffcda8;
+  --color-accent-300: #ffaa71;
+  --color-accent-400: #ff7f45;
+  --color-accent-500: #fb5f1f;
+  --color-accent-600: #ec4615;
+  --color-accent-700: #c43313;
+
+  /* צבע הכותרות: כחול-לילה כהה במקום שחור */
+  --color-ink: #23224d;
+  --color-page: #f6f6fb;
 }
 
 @layer base {
+  /* גלילה רכה לעוגנים, עם מקום ל-Header הדביק */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 7rem;
+  }
   body {
-    @apply bg-slate-50 font-sans text-slate-800 antialiased;
+    @apply bg-page font-sans text-slate-700 antialiased;
+    /* אווירה: כתמי צבע רכים של סגול, כתום ומנטה בראש העמוד */
+    background-image:
+      radial-gradient(50rem 30rem at 85% -8rem, --alpha(var(--color-brand-200) / 55%), transparent 70%),
+      radial-gradient(40rem 26rem at 10% -6rem, --alpha(var(--color-accent-200) / 45%), transparent 70%),
+      radial-gradient(36rem 22rem at 50% -4rem, --alpha(var(--color-emerald-200) / 35%), transparent 70%);
+    background-repeat: no-repeat;
+  }
+  h1, h2, h3 {
+    @apply text-ink;
   }
 }
 
-/* הבסיס לכל הכפתורים. @utility מאפשר לשלב אותו בסוגי הכפתורים עם @apply */
+/* הבסיס לכל הכפתורים: כפתורי גלולה. @utility מאפשר לשלב אותו בסוגי הכפתורים עם @apply */
 @utility btn {
-  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition
-    focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-200
+    focus-visible:outline-2 focus-visible:outline-offset-2 not-disabled:active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 /* מחלקות שחוזרות בכל האתר */
 @layer components {
   .card {
-    @apply rounded-xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6;
+    @apply rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_10px_40px_-12px] shadow-brand-900/10 sm:p-7;
+  }
+  /* כרטיס שהוא קישור: מתרומם קצת במעבר עכבר */
+  .card-link {
+    @apply transition duration-300 hover:border-brand-200 hover:shadow-[0_20px_50px_-12px] hover:shadow-brand-900/20 motion-safe:hover:-translate-y-1;
   }
   .card-title {
-    @apply text-base font-semibold text-slate-900;
+    @apply text-lg font-bold text-ink;
   }
 
+  /* הכפתורים הצבעוניים מתרוממים במעבר עכבר, ונלחצים פנימה בלחיצה */
   .btn-primary {
-    @apply btn bg-brand-600 text-white shadow-xs hover:bg-brand-700 focus-visible:outline-brand-600;
+    @apply btn bg-brand-600 text-white shadow-lg shadow-brand-600/30
+      focus-visible:outline-brand-600 not-disabled:hover:bg-brand-700 not-disabled:hover:shadow-xl not-disabled:hover:shadow-brand-600/40 motion-safe:not-disabled:hover:-translate-y-0.5;
+  }
+  .btn-accent {
+    @apply btn bg-accent-400 text-white shadow-lg shadow-accent-500/30
+      focus-visible:outline-accent-500 not-disabled:hover:bg-accent-500 not-disabled:hover:shadow-xl not-disabled:hover:shadow-accent-500/40 motion-safe:not-disabled:hover:-translate-y-0.5;
   }
   .btn-secondary {
-    @apply btn border border-slate-300 bg-white text-slate-700 shadow-xs hover:bg-slate-50 focus-visible:outline-slate-400;
+    @apply btn border-2 border-slate-200 bg-white py-2 text-slate-700
+      focus-visible:outline-slate-400 not-disabled:hover:border-brand-500 not-disabled:hover:text-brand-700;
   }
   .btn-danger {
-    @apply btn bg-rose-600 text-white shadow-xs hover:bg-rose-700 focus-visible:outline-rose-600;
+    @apply btn bg-rose-600 text-white shadow-lg shadow-rose-600/25
+      focus-visible:outline-rose-600 not-disabled:hover:bg-rose-700 motion-safe:not-disabled:hover:-translate-y-0.5;
   }
   .btn-ghost {
-    @apply btn px-3 text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+    @apply btn px-3.5 text-slate-600 hover:bg-brand-50 hover:text-brand-700;
   }
   .btn-sm {
-    @apply px-2.5 py-1.5 text-xs;
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  /* קישור בתוך טקסט: קו כתום שנמתח מתחתיו במעבר עכבר */
+  .link {
+    @apply bg-linear-to-l from-accent-400 to-accent-400 bg-no-repeat font-semibold text-brand-700 transition-all duration-300
+      [background-position:100%_100%] [background-size:0%_2px] hover:text-brand-800 hover:[background-size:100%_2px];
   }
 
   /* שורת הכפתורים בתחתית טופס או חלון: הכפתור הראשי ראשון בקוד ומוצג משמאל */
@@ -59,11 +104,11 @@
   }
 
   .label {
-    @apply mb-1.5 block text-sm font-medium text-slate-700;
+    @apply mb-1.5 block text-sm font-medium text-ink;
   }
   .input {
-    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-xs
-      placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none
+    @apply block w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-2.5 text-sm text-slate-900 transition
+      placeholder:text-slate-400 hover:border-slate-300 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15 focus:outline-none
       disabled:bg-slate-100 disabled:text-slate-500;
   }
   .field-error {
@@ -71,7 +116,7 @@
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 
   /* בטלפון הטבלה נגללת לרוחב בתוך העוטף, ולא כל העמוד */
@@ -82,43 +127,183 @@
     @apply w-full text-sm;
   }
   .table th {
-    @apply bg-slate-50 px-4 py-2.5 text-start text-xs font-medium whitespace-nowrap text-slate-500;
+    @apply bg-slate-50/80 px-3 py-3 text-start text-xs font-medium whitespace-nowrap text-slate-500 sm:px-4;
   }
   .table td {
-    @apply border-t border-slate-100 px-4 py-3 align-middle;
+    @apply border-t border-slate-100 px-3 py-3.5 align-middle sm:px-4;
   }
   .table tbody tr {
-    @apply hover:bg-slate-50;
+    @apply transition-colors hover:bg-brand-50/50;
+  }
+
+  /* אריח צבעוני עם עיגול שקוף בפינה (באזור האישי) */
+  .tile {
+    @apply relative isolate overflow-hidden rounded-3xl p-4 text-white shadow-lg sm:p-6;
+  }
+  .tile::after {
+    content: "";
+    @apply absolute -bottom-10 -left-10 -z-10 size-36 rounded-full bg-white/15;
   }
 }
 
-/* האנימציות של הקופה: מטבעות נופלים פנימה בהפקדה, עולים החוצה במשיכה, והסכום צף ונעלם */
-@keyframes coin-in {
-  from { transform: translateY(-60px); opacity: 0; }
-  25% { opacity: 1; }
-  to { transform: translateY(80px); opacity: 0; }
-}
-@keyframes coin-out {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-80px); opacity: 0; }
-}
+/* סכום השינוי בקופה אחרי הפקדה או משיכה: קופץ פנימה, עולה ונעלם */
 @keyframes money-label {
-  from { transform: translateY(0); opacity: 0; }
-  20% { opacity: 1; }
-  to { transform: translateY(-28px); opacity: 0; }
-}
-.coin-in {
-  animation: coin-in 0.9s ease-in both;
-}
-.coin-out {
-  animation: coin-out 0.9s ease-out both;
+  from { transform: translateY(8px) scale(0.8); opacity: 0; }
+  15% { transform: translateY(0) scale(1); opacity: 1; }
+  75% { opacity: 1; }
+  to { transform: translateY(-24px); opacity: 0; }
 }
 .money-label {
-  animation: money-label 1.8s ease-out both;
+  animation: money-label 2.2s ease-out both;
 }
+
+/* אנימציות של האתר: עמוד שנכנס, תוכן שמופיע בגלילה, חלון קופץ, הודעה וקופה מרחפת */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(16px); }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@keyframes float {
+  50% { transform: translateY(-10px); }
+}
+.rise-in {
+  animation: rise-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pop-in {
+  animation: pop-in 0.25s ease-out both;
+}
+.fade-in {
+  animation: fade-in 0.2s ease-out both;
+}
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* מעבר בין עמודים: העמוד החדש עולה מטושטש ומתחדד */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+}
+.page-enter {
+  animation: page-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* שורות ברשימה נכנסות אחת אחרי השנייה (ההשהיה נקבעת לכל שורה בקוד) */
+@keyframes row-in {
+  from { opacity: 0; transform: translateX(-16px); }
+}
+.row-in {
+  animation: row-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* כתמי אור שזזים לאט ברקע של פאנלים כהים */
+@keyframes blob-drift {
+  50% { transform: translate(40px, -30px) scale(1.15); }
+}
+.blob-drift {
+  animation: blob-drift 9s ease-in-out infinite;
+}
+
+/* הקו המקווקו בין השלבים בדף הבית זורם לאט */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -28; }
+}
+.dash-flow {
+  animation: dash-flow 1.6s linear infinite;
+}
+
+/* Reveal: התוכן מתחיל שקוף ומעט נמוך, ועולה למקומו כשהוא נכנס למסך */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+.reveal-draw {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1.6s ease-in-out;
+}
+.reveal-draw.is-visible {
+  clip-path: inset(0);
+}
+
+/* הילה סגולה שעוקבת אחרי העכבר בכרטיס (המיקום מגיע מ-trackPointer) */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(16rem circle at var(--x, 50%) var(--y, 50%), --alpha(var(--color-brand-200) / 55%), transparent 70%);
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* ברק שעובר על הכפתורים הצבעוניים במעבר עכבר */
+.btn-primary, .btn-accent {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.btn-primary::after, .btn-accent::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 35%) 50%, transparent 70%);
+  transform: translateX(110%);
+  transition: transform 0.7s ease;
+}
+.btn-primary:not(:disabled):hover::after, .btn-accent:not(:disabled):hover::after {
+  transform: translateX(-110%);
+}
+
+/* פס התקדמות הגלילה בראש העמוד. רק בדפדפנים שתומכים באנימציה לפי גלילה */
+.scroll-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  @keyframes grow-x {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  .scroll-progress {
+    display: block;
+    transform: scaleX(0);
+    transform-origin: right;
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .coin-in, .coin-out, .money-label {
+  html {
+    scroll-behavior: auto;
+  }
+  .money-label {
     animation-duration: 1ms;
+  }
+  .rise-in, .pop-in, .fade-in, .float, .dash-flow, .page-enter, .row-in, .blob-drift {
+    animation: none;
+  }
+  .reveal, .reveal-draw {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
   }
 }
 

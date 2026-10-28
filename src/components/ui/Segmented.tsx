@@ -9,7 +9,7 @@ interface SegmentedProps<T extends string> {
 
 // בחירה אחת מכמה אפשרויות צמודות: תיבות ההודעות, נמענים, סינון יתרות וסוג פעולה ברישום המרוכז
 const Segmented = <T extends string>({ label, options, value, onChange, disabled, className = "" }: SegmentedProps<T>) => (
-    <div role="group" aria-label={label} className={`inline-flex rounded-lg bg-slate-100 p-0.5 ${className}`}>
+    <div role="group" aria-label={label} className={`inline-flex rounded-full bg-slate-100 p-1 ${className}`}>
         {options.map((option) => (
             <button
                 key={option.value}
@@ -17,7 +17,7 @@ const Segmented = <T extends string>({ label, options, value, onChange, disabled
                 aria-pressed={value === option.value}
                 onClick={() => onChange(option.value)}
                 disabled={disabled}
-                className={`flex-1 cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap transition disabled:cursor-not-allowed ${value === option.value ? "bg-white text-slate-900 shadow-xs" : "text-slate-500 hover:text-slate-800"}`}
+                className={`flex-1 cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium whitespace-nowrap transition disabled:cursor-not-allowed ${value === option.value ? "bg-white text-brand-700 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
             >
                 {option.label}
             </button>

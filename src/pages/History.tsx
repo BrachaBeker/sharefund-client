@@ -11,7 +11,7 @@ import { categoryNames, typeNames } from "../utils/labels"
 import { getErrorMessage } from "../utils/errors"
 import EditTransactionDialog from "../components/EditTransactionDialog"
 import PageHeader from "../components/ui/PageHeader"
-import StatCard from "../components/ui/StatCard"
+import ColorTile from "../components/ui/ColorTile"
 import Icon from "../components/ui/Icon"
 import SearchInput from "../components/ui/SearchInput"
 import CategoryOptions from "../components/ui/CategoryOptions"
@@ -40,6 +40,12 @@ const displayName = (tx: Transaction) => {
     if (tx.isShared) return "הוצאה משותפת"
     if (tx.type === "deposit") return "תשלום לקופה"
     return "משיכה של חבר"
+}
+
+// מספרי העמודים לדפדוף: הראשון, האחרון, והעמודים שליד הנוכחי. null הוא "…" במקום עמודים שדולגו
+const pageNumbers = (current: number, total: number) => {
+    const shown = [...new Set([1, current - 1, current, current + 1, total])].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b)
+    return shown.flatMap((n, index) => (index > 0 && n - shown[index - 1] > 1 ? [null, n] : [n]))
 }
 
 // היסטוריה: טבלת תנועות עם סינונים, דפדוף ועריכה
@@ -94,10 +100,10 @@ const History = () => {
             <PageHeader title="היסטוריית תנועות" subtitle={isManager ? "כל ההפקדות והמשיכות בקבוצה" : "שמות מוצגים רק בתנועות שלך. בשאר התנועות מוצג תיאור כללי."} />
 
             {data && (
-                <div className="mb-6 grid gap-4 sm:grid-cols-3">
-                    <StatCard label="סך כל ההפקדות" value={formatMoney(data.summary.totalDeposited)} icon="arrowDown" tone="bg-emerald-50 text-emerald-600" />
-                    <StatCard label="יתרת הקופה" value={formatMoney(data.summary.fundBalance)} icon="wallet" tone="bg-brand-50 text-brand-600" valueClass={amountClass(data.summary.fundBalance)} />
-                    <StatCard label={hasActiveFilters ? "תנועות שנמצאו" : "מספר התנועות"} value={data.total.toLocaleString("he-IL")} icon="clock" tone="bg-slate-100 text-slate-600" />
+                <div className="mb-6 grid gap-4 sm:grid-cols-3 sm:gap-5">
+                    <ColorTile tone="green" icon="arrowDown" label="סך כל ההפקדות" value={formatMoney(data.summary.totalDeposited)} hint="מאז פתיחת הקבוצה" />
+                    <ColorTile tone="purple" icon="wallet" label="יתרת הקופה" value={formatMoney(data.summary.fundBalance)} hint={data.summary.fundBalance < 0 ? "הקופה במינוס" : "כמה כסף יש עכשיו בקופה"} />
+                    <ColorTile tone="orange" icon="clock" label={hasActiveFilters ? "תנועות שנמצאו" : "מספר התנועות"} value={data.total.toLocaleString("he-IL")} hint={hasActiveFilters ? "לפי החיפוש והסינון" : "הפקדות ומשיכות"} />
                 </div>
             )}
 
@@ -172,9 +178,9 @@ const History = () => {
                                     <th><span className="sr-only">עריכה</span></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {data.items.map((tx) => (
-                                    <tr key={tx.id} className={tx.isMine ? "bg-brand-50/40" : ""}>
+                            <tbody key={data.page}>
+                                {data.items.map((tx, index) => (
+                                    <tr key={tx.id} className={`row-in ${tx.isMine ? "bg-brand-50/40" : ""}`} style={{ animationDelay: `${index * 35}ms` }}>
                                         <td className="whitespace-nowrap text-slate-500">{formatDateTime(tx.createdAt)}</td>
                                         <td className="whitespace-nowrap">
                                             <p className={tx.userName ? "font-medium text-slate-800" : "text-slate-400 italic"}>{displayName(tx)}</p>
@@ -207,17 +213,27 @@ const History = () => {
                         <p>
                             מוצגות {(data.page - 1) * data.pageSize + 1}–{Math.min(data.page * data.pageSize, data.total)} מתוך {data.total}
                         </p>
-                        <div className="flex items-center gap-2">
-                            <button type="button" onClick={() => setPage((p) => p - 1)} disabled={page <= 1} className="btn-secondary btn-sm">
+                        <nav className="flex items-center gap-1.5" aria-label="דפדוף בין העמודים">
+                            <button type="button" onClick={() => setPage((p) => p - 1)} disabled={page <= 1} className="btn-secondary btn-sm size-9 p-0" aria-label="העמוד הקודם">
                                 <Icon name="chevronRight" className="size-4" />
-                                הקודם
                             </button>
-                            <span className="px-2 font-medium text-slate-700">עמוד {data.page} מתוך {totalPages}</span>
-                            <button type="button" onClick={() => setPage((p) => p + 1)} disabled={page >= totalPages} className="btn-secondary btn-sm">
-                                הבא
+                            {pageNumbers(data.page, totalPages).map((number, index) => number === null
+                                ? <span key={`gap-${index}`} className="px-1 text-slate-400">…</span>
+                                : (
+                                    <button
+                                        key={number}
+                                        type="button"
+                                        onClick={() => setPage(number)}
+                                        aria-current={number === data.page ? "page" : undefined}
+                                        className={`grid size-9 cursor-pointer place-items-center rounded-full text-sm font-semibold tabular-nums transition duration-200 ${number === data.page ? "scale-110 bg-brand-600 text-white shadow-lg shadow-brand-600/30" : "text-slate-600 hover:bg-brand-50 hover:text-brand-700"}`}
+                                    >
+                                        {number}
+                                    </button>
+                                ))}
+                            <button type="button" onClick={() => setPage((p) => p + 1)} disabled={page >= totalPages} className="btn-secondary btn-sm size-9 p-0" aria-label="העמוד הבא">
                                 <Icon name="chevronLeft" className="size-4" />
                             </button>
-                        </div>
+                        </nav>
                     </div>
                 </section>
             )}
