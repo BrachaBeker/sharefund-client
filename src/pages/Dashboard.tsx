@@ -52,7 +52,7 @@ const Dashboard = () => {
             {group.isActive && (
                 <div className="mt-6 space-y-6">
                     <TransactionForm groupId={groupId} />
-                    <GroupActions groupId={groupId} role={group.role} />
+                    <GroupActions groupId={groupId} role={group.role} myBalance={group.myBalance} />
                 </div>
             )}
         </>

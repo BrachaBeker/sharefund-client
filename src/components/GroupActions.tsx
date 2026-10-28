@@ -12,11 +12,12 @@ import Icon from "./ui/Icon"
 
 interface GroupActionsProps {
     groupId: number,
-    role: Role
+    role: Role,
+    myBalance: number
 }
 
-// יציאה מהקבוצה (לחבר) וסגירת הקבוצה (למנהל)
-const GroupActions = ({ groupId, role }: GroupActionsProps) => {
+// יציאה מהקבוצה (לחבר, רק ביתרה 0) וסגירת הקבוצה (למנהל)
+const GroupActions = ({ groupId, role, myBalance }: GroupActionsProps) => {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
     const [errorMessage, setErrorMessage] = useState("")
@@ -78,7 +79,7 @@ const GroupActions = ({ groupId, role }: GroupActionsProps) => {
                     </p>
                 </div>
                 {role === "member"
-                    ? <button type="button" onClick={() => { setErrorMessage(""); setOpenDialog("leave") }} className="btn-secondary shrink-0 text-rose-600"><Icon name="logout" />יציאה מהקבוצה</button>
+                    ? <button type="button" onClick={() => { setErrorMessage(""); setOpenDialog("leave") }} disabled={myBalance !== 0} title={myBalance !== 0 ? "אפשר לצאת רק ביתרה 0" : undefined} className="btn-secondary shrink-0 text-rose-600 disabled:border-slate-200 disabled:text-slate-400 disabled:hover:bg-white"><Icon name="logout" />יציאה מהקבוצה</button>
                     : <button type="button" onClick={handleClose} disabled={isCheckingBalances} className="btn-secondary shrink-0 text-rose-600"><Icon name="lock" />{isCheckingBalances ? "בודק יתרות..." : "סגירת הקבוצה"}</button>}
             </div>
 
