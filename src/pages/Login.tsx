@@ -16,14 +16,18 @@ const Login = () => {
     const { user, login } = useAuth()
     const navigate = useNavigate()
     const [errorMessage, setErrorMessage] = useState("")
+    // true מתחילת הכניסה ועד המעבר לעמוד הבא, כדי שההפניה של משתמש מחובר לא תקדים את המעבר הנכון
+    const [isLoggingIn, setIsLoggingIn] = useState(false)
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<LoginInput>()
 
     const onSubmit = async (input: LoginInput) => {
         setErrorMessage("")
+        setIsLoggingIn(true)
         try {
             const loggedUser = await login(input)
             navigate(await getPathAfterLogin(loggedUser), { replace: true })
         } catch (err) {
+            setIsLoggingIn(false)
             setErrorMessage(getErrorMessage(err))
         }
     }
@@ -35,7 +39,7 @@ const Login = () => {
         handleSubmit(onSubmit)()
     }
 
-    if (user && !isSubmitting) return <Navigate to={user.mustChangePassword ? "/change-password" : "/select-group"} replace />
+    if (user && !isLoggingIn) return <Navigate to={user.mustChangePassword ? "/change-password" : "/select-group"} replace />
 
     return (
         <AuthCard title="ברוכים השבים" subtitle="נכנסים עם המייל והסיסמה שקיבלתם">
