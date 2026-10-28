@@ -13,7 +13,7 @@ const App = () => {
                 <AppRoutes />
             </main>
             <footer className="border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-400">
-                ShareFund © {YEAR} · ניהול קופה משותפת בקלות
+                © {YEAR} ShareFund · כל הזכויות שמורות לברכי בקר
             </footer>
         </div>
     )
