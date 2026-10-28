@@ -164,12 +164,20 @@ const Members = () => {
                                                             <Icon name="key" className="size-4" />
                                                             <span className="hidden sm:inline">איפוס סיסמה</span>
                                                         </button>
-                                                        {group.isActive && (
+                                                        {group.isActive && (member.balance === 0 ? (
                                                             <button type="button" onClick={() => askRemove(member)} className="btn-secondary btn-sm text-rose-600 hover:bg-rose-50" title="הסרה">
                                                                 <Icon name="trash" className="size-4" />
                                                                 <span className="hidden sm:inline">הסרה</span>
                                                             </button>
-                                                        )}
+                                                        ) : (
+                                                            <span
+                                                                className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1 text-xs whitespace-nowrap text-slate-500"
+                                                                title="אפשר להסיר רק חבר שהיתרה שלו 0. כדי להסיר, אפסו קודם את היתרה ברישום המרוכז."
+                                                            >
+                                                                <Icon name="lock" className="size-3.5" />
+                                                                הסרה ביתרה 0
+                                                            </span>
+                                                        ))}
                                                     </div>
                                                 )}
                                             </td>
@@ -191,7 +199,7 @@ const Members = () => {
                     onCancel={() => setMemberToRemove(null)}
                     isPending={removeMutation.isPending}
                 >
-                    <p>אפשר להסיר רק חבר שהיתרה שלו 0, וכשיישארו בקבוצה לפחות 3 חברים.</p>
+                    <p>החבר יוסר מהקבוצה, וההיסטוריה שלו תישמר. בקבוצה צריכים להישאר לפחות 3 חברים.</p>
                     {removeMutation.isError && <Alert className="mt-3">{getErrorMessage(removeMutation.error)}</Alert>}
                 </ConfirmDialog>
             )}
