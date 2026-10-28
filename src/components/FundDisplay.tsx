@@ -1,113 +1,152 @@
-// עיצוב סכום וצבע לפי סכום
+import { useId, useState } from "react"
 import { amountClass, formatMoney } from "../utils/format"
-// הסמלים
-import Icon from "./ui/Icon"
+import CardTitle from "./ui/CardTitle"
 
-// מה הקומפוננטה מקבלת
 interface FundDisplayProps {
-  // יתרת הקופה (יכולה להיות שלילית)
-  fundBalance: number,
-  // סך כל ההפקדות מפתיחת הקבוצה
-  totalDeposited: number
+    fundBalance: number,
+    totalDeposited: number
 }
 
-// איפה נמצא קו ה-0, באחוזים מלמעלה. מעליו מקום לקופה חיובית, ומתחתיו מקום קטן יותר לקופה שלילית
-const ZERO_LINE = 72
+interface MoneyFlow {
+    id: number,
+    amount: number
+}
 
-// הקופה: עמודה לאורך עם פס מאוזן ב-0.
-// קופה חיובית ממלאת את העמודה מה-0 למעלה בירוק, וקופה שלילית ממלאת מה-0 למטה באדום.
+// מידות הציור: הגובה של צנצנת מלאה, המדף (קו ה-0) שהצנצנת עומדת עליו, והעומק המקסימלי של החוב מתחתיו
+const FULL_Y = 92
+const ZERO_Y = 250
+const DEBT_HEIGHT = 40
+// ערימת המטבעות: שורות של מטבעות עם הזזה קטנה בכל שורה, כדי שזה ייראה כמו ערימה ולא כמו טבלה
+const COINS = Array.from({ length: Math.ceil((ZERO_Y - FULL_Y) / 6) + 2 }, (_, row) =>
+    Array.from({ length: 9 }, (_, column) => ({
+        x: 18 + column * 20 + ((row * 13) % 20) - 10,
+        y: FULL_Y + row * 6 + ((row * 7 + column * 5) % 3) - 1,
+        color: ["#fbbf24", "#fcd34d", "#f59e0b"][(row + column * 2) % 3],
+    }))
+).flat()
+const JAR_PATH = "M66 52 C66 64 32 66 32 92 L32 236 Q32 250 46 250 L154 250 Q168 250 168 236 L168 92 C168 66 134 64 134 52 Z"
+
+// הקופה: צנצנת זכוכית עם מטבעות שעומדת על מדף. המדף הוא קו ה-0.
+// כמה שיותר כסף בקופה – המטבעות עולים גבוה יותר. קופה במינוס: הצנצנת ריקה ופס אדום יורד מתחת למדף.
+// בכל שינוי ביתרה מטבעות נופלים לתוך הצנצנת (הפקדה) או יוצאים ממנה (משיכה)
 const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
-  // האם הקופה במינוס
-  const isNegative = fundBalance < 0
-  // הגובה המלא של העמודה מייצג את סך ההפקדות (או את הקופה, אם היא גדולה יותר). לפחות 1, כדי לא לחלק ב-0
-  const max = Math.max(totalDeposited, Math.abs(fundBalance), 1)
-  // גובה המילוי הירוק, באחוזים מגובה העמודה (רק כשהקופה חיובית)
-  const positiveHeight = isNegative ? 0 : (fundBalance / max) * ZERO_LINE
-  // גובה המילוי האדום, באחוזים. לא יותר מהמקום שיש מתחת לקו ה-0
-  const negativeHeight = isNegative ? Math.min((-fundBalance / max) * ZERO_LINE, 100 - ZERO_LINE) : 0
-  // כמה אחוזים מכל ההפקדות נשארו בקופה (מעוגל למספר שלם)
-  const percentLeft = totalDeposited > 0 ? Math.round((fundBalance / totalDeposited) * 100) : 0
+    const id = useId()
+    const [previousBalance, setPreviousBalance] = useState(fundBalance)
+    const [flow, setFlow] = useState<MoneyFlow | null>(null)
 
-  return (
-    // הכרטיס. כשהקופה במינוס: מסגרת ורקע אדומים
-    <section className={`card relative overflow-hidden ${isNegative ? "border-rose-300 bg-rose-50/60 ring-4 ring-rose-100" : ""}`}>
-      {/* כותרת הכרטיס */}
-      <div className="mb-4 flex items-center justify-between">
-        {/* הכותרת */}
-        <h2 className="text-base font-bold text-slate-700">הקופה</h2>
-        {/* תג מצב: אדום ומהבהב במינוס, ירוק אחרת */}
-        {isNegative
-          ? <span className="badge animate-pulse bg-rose-600 text-white"><Icon name="warning" className="size-3.5" />הקופה במינוס</span>
-          : <span className="badge bg-emerald-100 text-emerald-700">תקינה</span>}
-      </div>
+    // היתרה השתנתה מאז הציור הקודם: מפעילים את האנימציה של הכסף
+    if (fundBalance !== previousBalance) {
+        setPreviousBalance(fundBalance)
+        setFlow({ id: (flow?.id ?? 0) + 1, amount: fundBalance - previousBalance })
+    }
 
-      {/* העמודה והפרטים: זה לצד זה, ובמסך צר הפרטים יורדים מתחת */}
-      <div className="flex flex-wrap items-stretch gap-5">
-        {/* סרגל הסכומים ליד העמודה: הסכום המלא למעלה ו-0 בקו */}
-        <div className="relative h-72 w-16 shrink-0 text-[11px] font-medium text-slate-400">
-          {/* הסכום המלא, בראש העמודה */}
-          <span className="absolute end-0 top-0 -translate-y-1/2">{formatMoney(max)}</span>
-          {/* חצי מהסכום, באמצע החלק החיובי */}
-          <span className="absolute end-0 -translate-y-1/2" style={{ top: `${ZERO_LINE / 2}%` }}>{formatMoney(max / 2)}</span>
-          {/* 0, בגובה הקו. מודגש */}
-          <span className="absolute end-0 -translate-y-1/2 font-bold text-slate-700" style={{ top: `${ZERO_LINE}%` }}>0 ₪</span>
-        </div>
+    const isNegative = fundBalance < 0
+    const max = Math.max(totalDeposited, fundBalance, 1)
+    const fillHeight = (isNegative ? 0 : fundBalance / max) * (ZERO_Y - FULL_Y)
+    // חוב קטן עדיין מקבל פס בגובה שאפשר לראות
+    const debtHeight = isNegative ? Math.max(Math.min(-fundBalance / max, 1), 0.4) * DEBT_HEIGHT : 0
+    const percentLeft = totalDeposited > 0 ? Math.round((fundBalance / totalDeposited) * 100) : 0
+    const isDeposit = (flow?.amount ?? 0) > 0
 
-        {/* העמודה עצמה: מיכל עם פינות מעוגלות */}
-        <div className="relative h-72 w-24 shrink-0 overflow-hidden rounded-3xl border-4 border-white bg-gradient-to-b from-slate-100 to-slate-200 shadow-[inset_0_2px_10px_rgba(15,23,42,0.12),0_10px_25px_-10px_rgba(15,23,42,0.35)]">
-          {/* קווי עזר דקים כל רבע מהחלק החיובי */}
-          {[0.25, 0.5, 0.75].map((part) => (
-            // קו אפור מקווקו
-            <div key={part} className="absolute inset-x-0 border-t border-dashed border-slate-300/80" style={{ top: `${ZERO_LINE * part}%` }} />
-          ))}
+    return (
+        <section className={`card ${isNegative ? "border-rose-200" : ""}`}>
+            <CardTitle
+                title="מצב הקופה"
+                actions={isNegative
+                    ? <span className="badge bg-rose-100 text-rose-700">במינוס</span>
+                    : <span className="badge bg-emerald-50 text-emerald-700">תקינה</span>}
+            />
 
-          {/* המילוי הירוק: מתחיל בקו ה-0 ועולה למעלה. transition: הגובה משתנה בהנפשה רכה */}
-          <div
-            className="absolute inset-x-0 bg-gradient-to-t from-emerald-600 via-emerald-500 to-teal-400 transition-[height] duration-1000 ease-out"
-            style={{ bottom: `${100 - ZERO_LINE}%`, height: `${positiveHeight}%` }}
-          >
-            {/* פס בהיר בראש המילוי, שנראה כמו פני נוזל */}
-            {positiveHeight > 0 && <div className="absolute inset-x-0 top-0 h-1.5 bg-white/40" />}
-          </div>
+            <div className="flex flex-wrap items-center gap-6">
+                <div className="relative mx-auto w-48 shrink-0">
+                    <svg viewBox="0 0 220 300" className="w-full overflow-visible" role="img" aria-label={`יתרת הקופה ${formatMoney(fundBalance)} מתוך הפקדות של ${formatMoney(totalDeposited)}`}>
+                        <defs>
+                            <linearGradient id={`${id}-glass`} x1="0" x2="1">
+                                <stop offset="0" stopColor="#0f172a" stopOpacity="0.22" />
+                                <stop offset="0.25" stopColor="#0f172a" stopOpacity="0" />
+                                <stop offset="0.75" stopColor="#0f172a" stopOpacity="0" />
+                                <stop offset="1" stopColor="#0f172a" stopOpacity="0.28" />
+                            </linearGradient>
+                            <linearGradient id={`${id}-lid`} x1="0" x2="1">
+                                <stop offset="0" stopColor="#334155" />
+                                <stop offset="0.35" stopColor="#64748b" />
+                                <stop offset="1" stopColor="#1e293b" />
+                            </linearGradient>
+                            <clipPath id={`${id}-jar`}><path d={JAR_PATH} /></clipPath>
+                        </defs>
 
-          {/* המילוי האדום: מתחיל בקו ה-0 ויורד למטה, עם פסים אלכסוניים */}
-          <div
-            className="absolute inset-x-0 bg-[repeating-linear-gradient(135deg,#e11d48_0_8px,#be123c_8px_16px)] transition-[height] duration-1000 ease-out"
-            style={{ top: `${ZERO_LINE}%`, height: `${negativeHeight}%` }}
-          />
+                        <ellipse cx="110" cy={ZERO_Y + 2} rx="80" ry="5" fill="#0f172a" opacity="0.12" />
 
-          {/* קו ה-0: פס מאוזן כהה לרוחב כל העמודה */}
-          <div className="absolute inset-x-0 z-10 h-1 -translate-y-1/2 bg-slate-800 shadow" style={{ top: `${ZERO_LINE}%` }} />
+                        <g transform="translate(10 0)">
+                            <path d={JAR_PATH} fill="#f1f5f9" />
 
-          {/* ברק לבן לאורך הצד, שנותן לעמודה מראה של זכוכית */}
-          <div className="pointer-events-none absolute inset-y-3 start-2 w-2 rounded-full bg-white/50" />
-        </div>
+                            <g clipPath={`url(#${id}-jar)`}>
+                                <g className="transition-all duration-1000 ease-out" opacity={fillHeight > 0 ? 1 : 0} style={{ transform: `translateY(${ZERO_Y - FULL_Y - fillHeight}px)` }}>
+                                    <rect x="0" y={FULL_Y + 4} width="200" height={ZERO_Y - FULL_Y} fill="#b45309" />
+                                    {COINS.map((coin) => (
+                                        <g key={`${coin.x}-${coin.y}`}>
+                                            <ellipse cx={coin.x} cy={coin.y + 2} rx="10" ry="4" fill="#b45309" />
+                                            <ellipse cx={coin.x} cy={coin.y} rx="10" ry="4" fill={coin.color} stroke="#d97706" strokeWidth="0.7" />
+                                        </g>
+                                    ))}
+                                </g>
+                                <rect x="0" y="0" width="200" height={ZERO_Y} fill={`url(#${id}-glass)`} />
+                            </g>
 
-        {/* הפרטים: הסכום, ההסבר וסך ההפקדות */}
-        <div className="flex min-w-40 flex-1 flex-col justify-center gap-4">
-          {/* הסכום הגדול */}
-          <div>
-            {/* תווית קטנה */}
-            <p className="text-xs font-medium text-slate-500">יתרת הקופה</p>
-            {/* הסכום, בצבע לפי חיובי / שלילי / אפס */}
-            <p className={`text-3xl font-extrabold tracking-tight sm:text-4xl ${amountClass(fundBalance)}`}>{formatMoney(fundBalance)}</p>
-          </div>
-          {/* הסבר: במינוס – אזהרה, אחרת כמה אחוזים נשארו */}
-          {isNegative
-            ? <p className="text-sm font-medium text-rose-700">הוצאו יותר כסף ממה שהופקד. כדאי לבקש מהחברים להפקיד.</p>
-            : <p className="text-sm text-slate-500">נשארו בקופה <strong className="text-slate-700">{percentLeft}%</strong> מכל ההפקדות</p>}
-          {/* סך ההפקדות */}
-          <div className="rounded-xl bg-slate-50 px-3 py-2">
-            {/* תווית */}
-            <p className="text-xs text-slate-500">סך כל ההפקדות</p>
-            {/* הסכום */}
-            <p className="font-bold text-slate-800">{formatMoney(totalDeposited)}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
+                            <path d={JAR_PATH} fill="none" stroke="#94a3b8" strokeWidth="3" />
+                            <path d="M46 104 L46 232" stroke="#ffffff" strokeWidth="7" strokeLinecap="round" opacity="0.65" />
+                            <path d="M150 112 L150 150" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" opacity="0.5" />
+
+                            <rect x="58" y="30" width="84" height="24" rx="5" fill={`url(#${id}-lid)`} />
+                            <rect x="58" y="30" width="84" height="6" rx="3" fill="#94a3b8" opacity="0.6" />
+                            <rect x="80" y="38" width="40" height="6" rx="3" fill="#0f172a" />
+
+                            {flow && [0, 1, 2].map((index) => (
+                                <g key={`${flow.id}-${index}`} className={isDeposit ? "coin-in" : "coin-out"} style={{ animationDelay: `${index * 180}ms` }}>
+                                    <circle cx="100" cy="43" r="11" fill="#fbbf24" stroke="#b45309" strokeWidth="1.5" />
+                                    <text x="100" y="47.5" textAnchor="middle" fontSize="12" fontWeight="700" fill="#92400e">₪</text>
+                                </g>
+                            ))}
+                        </g>
+
+                        {isNegative && (
+                            <g>
+                                <rect x="52" y={ZERO_Y} width="116" height={debtHeight} rx="4" fill="#f43f5e" />
+                                <text x="110" y={ZERO_Y + debtHeight / 2 + 5} textAnchor="middle" fontSize="13" fontWeight="600" fill="#ffffff">חוב</text>
+                            </g>
+                        )}
+                        <line x1="28" x2="212" y1={ZERO_Y} y2={ZERO_Y} stroke="#334155" strokeWidth="3" strokeLinecap="round" />
+                        <text x="12" y={ZERO_Y + 5} textAnchor="middle" fontSize="15" fontWeight="700" fill="#334155">0</text>
+                    </svg>
+
+                    {flow && (
+                        <span
+                            key={flow.id}
+                            dir="ltr"
+                            className={`money-label absolute inset-x-0 top-0 text-center text-sm font-semibold tabular-nums ${isDeposit ? "text-emerald-600" : "text-rose-600"}`}
+                            onAnimationEnd={() => setFlow(null)}
+                        >
+                            {isDeposit ? "+" : "−"}{formatMoney(Math.abs(flow.amount))}
+                        </span>
+                    )}
+                </div>
+
+                <div className="min-w-48 flex-1 space-y-4">
+                    <div>
+                        <p className="text-sm text-slate-500">יתרת הקופה</p>
+                        <p className={`text-3xl font-bold tabular-nums ${amountClass(fundBalance)}`}>{formatMoney(fundBalance)}</p>
+                    </div>
+                    <div>
+                        <p className="text-sm text-slate-500">סך ההפקדות</p>
+                        <p className="text-lg font-semibold text-slate-900 tabular-nums">{formatMoney(totalDeposited)}</p>
+                    </div>
+                    <p className={`text-sm ${isNegative ? "text-rose-700" : "text-slate-500"}`}>
+                        {isNegative ? "הוצא יותר ממה שהופקד. כדאי לבקש מהחברים להפקיד." : `נשארו בקופה ${percentLeft}% מכל ההפקדות.`}
+                    </p>
+                </div>
+            </div>
+        </section>
+    )
 }
 
-// מייצאים את הקומפוננטה
 export default FundDisplay
