@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { formatMoney } from "../utils/format"
 // עיצוב – לא לוגיקה
 import { useCountUp } from "../design/useCountUp"
@@ -21,6 +21,13 @@ const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
     // עיצוב – לא לוגיקה
     const shownBalance = useCountUp(fundBalance)
     // עיצוב – לא לוגיקה
+    const [isRingDrawn, setIsRingDrawn] = useState(false)
+    // עיצוב – לא לוגיקה
+    useEffect(() => {
+        const frame = requestAnimationFrame(() => requestAnimationFrame(() => setIsRingDrawn(true)))
+        return () => cancelAnimationFrame(frame)
+    }, [])
+    // עיצוב – לא לוגיקה
     const [previousBalance, setPreviousBalance] = useState(fundBalance)
     const [flow, setFlow] = useState<MoneyFlow | null>(null)
 
@@ -34,6 +41,8 @@ const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
     const ringFill = isNegative ? 1 : Math.min(Math.max(percentLeft, 0), 100) / 100
     const spent = totalDeposited - fundBalance
     const isDeposit = (flow?.amount ?? 0) > 0
+    // עיצוב – לא לוגיקה
+    const shownPercent = Math.round(useCountUp(percentLeft, 2000))
 
     return (
         <section className="relative isolate overflow-hidden rounded-3xl bg-linear-to-bl from-brand-500 via-brand-600 to-indigo-800 p-6 text-white shadow-2xl shadow-brand-700/30 sm:p-8">
@@ -51,7 +60,11 @@ const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
             <div className="mt-6 flex flex-wrap items-center justify-between gap-6">
                 <div className="relative min-w-0">
                     <p className="text-sm text-white/75">יתרת הקופה</p>
-                    <p className="mt-1 text-4xl font-bold tracking-tight tabular-nums sm:text-5xl">{formatMoney(shownBalance)}</p>
+                    {/* עיצוב – לא לוגיקה */}
+                    <p className="mt-1 grid text-4xl font-bold tracking-tight tabular-nums sm:text-5xl">
+                        <span className="invisible [grid-area:1/1]" aria-hidden="true">{formatMoney(fundBalance)}</span>
+                        <span className="[grid-area:1/1]">{formatMoney(shownBalance)}</span>
+                    </p>
                     <p className="mt-2 text-sm text-white/75">
                         {isNegative ? "הוצא יותר ממה שהופקד. כדאי לבקש מהחברים להפקיד." : `מתוך הפקדות של ${formatMoney(totalDeposited)}`}
                     </p>
@@ -79,12 +92,12 @@ const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
                             stroke={isNegative ? "#fb7185" : "#ffffff"}
                             strokeWidth="11" strokeLinecap="round"
                             strokeDasharray={RING_LENGTH}
-                            strokeDashoffset={RING_LENGTH * (1 - ringFill)}
-                            className="transition-[stroke-dashoffset] duration-1000 ease-out"
+                            strokeDashoffset={RING_LENGTH * (1 - (isRingDrawn ? ringFill : 0))}
+                            className="transition-[stroke-dashoffset] duration-[2000ms] ease-out"
                         />
                     </svg>
                     <div className="absolute inset-0 grid place-content-center text-center">
-                        <span className="text-2xl font-bold tabular-nums">{isNegative ? "!" : `${percentLeft}%`}</span>
+                        <span className="text-2xl font-bold tabular-nums">{isNegative ? "!" : `${shownPercent}%`}</span>
                         <span className="text-[11px] text-white/75">{isNegative ? "חוב" : "נשאר"}</span>
                     </div>
                 </div>
