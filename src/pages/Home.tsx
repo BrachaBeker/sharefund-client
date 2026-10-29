@@ -24,7 +24,7 @@ const steps: { title: string, text: string, icon: IconName, bubble: string, plac
 // עיצוב – לא לוגיקה
 const bubbles: { icon: IconName, className: string }[] = [
     { icon: "users", className: "-top-7 left-10 bg-sky-500 [animation-delay:-1s]" },
-    { icon: "arrowDown", className: "top-[42%] -left-7 bg-accent-400 [animation-delay:-3s]" },
+    { icon: "arrowDown", className: "top-[42%] -left-2 sm:-left-7 bg-accent-400 [animation-delay:-3s]" },
     { icon: "check", className: "-bottom-7 left-10 bg-emerald-500 [animation-delay:-4.5s]" },
 ]
 

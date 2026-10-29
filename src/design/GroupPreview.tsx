@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react"
 import Icon from "./Icon"
 import Avatar from "./Avatar"
 import { gradientFor } from "./colors"
@@ -25,7 +26,7 @@ const GroupPreview = ({ groupName, managerName, memberNames }: GroupPreviewProps
 
             <div className="mt-6 -rotate-1 rounded-3xl bg-white p-5 text-ink shadow-2xl">
                 <div className="flex items-center gap-3">
-                    <Avatar name={name} className={`size-12 rounded-2xl bg-linear-to-br text-lg text-white shadow-lg ${gradientFor(name)}`} />
+                    <Avatar name={name} className={`breathe size-12 rounded-2xl bg-linear-to-br text-lg text-white shadow-lg ${gradientFor(name)}`} />
                     <div className="min-w-0 flex-1">
                         <p className={`truncate text-lg font-bold ${groupName.trim() ? "" : "text-slate-300"}`}>{name}</p>
                         <p className="text-xs text-slate-500">{members.length + 1} חברים · יתרה 0.00 ₪</p>
@@ -50,9 +51,9 @@ const GroupPreview = ({ groupName, managerName, memberNames }: GroupPreviewProps
             </div>
 
             <ul className="mt-6 space-y-2.5">
-                {tips.map((tip) => (
+                {tips.map((tip, index) => (
                     <li key={tip} className="flex items-center gap-2.5 text-sm text-white/85">
-                        <span className="grid size-6 place-items-center rounded-full bg-white/15"><Icon name="check" className="size-3.5" /></span>
+                        <span className="grid size-6 place-items-center rounded-full bg-white/15" style={{ "--delay": `${600 + index * 450}ms` } as CSSProperties}><Icon name="check" className="draw-check size-3.5" /></span>
                         {tip}
                     </li>
                 ))}

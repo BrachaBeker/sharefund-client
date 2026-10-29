@@ -197,6 +197,23 @@
   animation: dash-flow 1.6s linear infinite;
 }
 
+@keyframes draw-check {
+  to { stroke-dashoffset: 0; }
+}
+.draw-check path {
+  stroke-dasharray: 26;
+  stroke-dashoffset: 26;
+  animation: draw-check 0.7s ease-out forwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes breathe {
+  50% { transform: scale(1.12); }
+}
+.breathe {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -274,8 +291,11 @@
   .money-label {
     animation-duration: 1ms;
   }
-  .rise-in, .pop-in, .fade-in, .float, .dash-flow, .page-enter, .row-in, .blob-drift {
+  .rise-in, .pop-in, .fade-in, .float, .dash-flow, .page-enter, .row-in, .blob-drift, .breathe, .draw-check path {
     animation: none;
+  }
+  .draw-check path {
+    stroke-dashoffset: 0;
   }
   .reveal, .reveal-draw {
     opacity: 1;

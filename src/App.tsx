@@ -25,12 +25,12 @@ const App = () => {
             <footer className="mt-10 bg-ink text-sm text-white/70">
                 {/* עיצוב – לא לוגיקה */}
                 <div className="h-1 bg-linear-to-l from-brand-500 via-fuchsia-500 to-accent-400" />
-                <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-8 text-center sm:flex-row sm:justify-between sm:px-6">
+                <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 pt-8 pb-20 text-center sm:flex-row sm:pb-8 sm:justify-between sm:px-6">
                     <span className="flex items-center gap-2">
                         <LogoMark />
                         <span className="text-lg font-extrabold text-white">ShareFund</span>
                     </span>
-                    <p>ShareFund · ניהול קופה משותפת בקלות · כל הזכויות שמורות לברכי בקר ©</p>
+                    <p className="text-balance">ShareFund · ניהול קופה משותפת בקלות · כל הזכויות שמורות לברכי בקר ©</p>
                 </div>
             </footer>
 
