@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
-import Icon, { type IconName } from "./Icon"
+// עיצוב – לא לוגיקה
+import Icon, { type IconName } from "../../design/Icon"
 
 type AlertVariant = "error" | "success" | "info" | "warning"
 
@@ -16,7 +17,6 @@ interface AlertProps {
     className?: string
 }
 
-// הודעה צבעונית עם סמל: שגיאה מהשרת, הצלחה, מידע או אזהרה
 const Alert = ({ variant = "error", children, className = "" }: AlertProps) => (
     <div role="alert" className={`pop-in flex items-start gap-2.5 rounded-lg border px-4 py-3 text-sm ${styles[variant].box} ${className}`}>
         <Icon name={styles[variant].icon} className="mt-0.5 size-4 shrink-0" />

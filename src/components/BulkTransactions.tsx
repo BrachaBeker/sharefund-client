@@ -18,7 +18,6 @@ interface BulkTransactionsProps {
     members: MemberFull[]
 }
 
-// מה שהוקלד לחבר אחד
 interface Entry {
     amount: string,
     type: TransactionType
@@ -34,8 +33,6 @@ const emptyEntry: Entry = { amount: "", type: "deposit" }
 
 const typeOptions = (["deposit", "withdraw"] as const).map((type) => ({ value: type, label: typeNames[type] }))
 
-// רישום מרוכז (מנהל): ליד כל חבר שדה סכום ובחירת הפקדה או משיכה, ושמירה אחת.
-// השרת מקבל סוג אחד בכל בקשה, ולכן נשלחות עד שתי בקשות: אחת להפקדות ואחת למשיכות
 const BulkTransactions = ({ groupId, members }: BulkTransactionsProps) => {
     const queryClient = useQueryClient()
     const [entries, setEntries] = useState<Record<number, Entry>>({})

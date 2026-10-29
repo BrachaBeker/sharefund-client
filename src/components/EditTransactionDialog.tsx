@@ -18,7 +18,6 @@ interface EditTransactionDialogProps {
     onClose: () => void
 }
 
-// עריכת תנועה: קטגוריה והערה בלבד (אי אפשר לשנות סכום או סוג)
 const EditTransactionDialog = ({ groupId, transaction, onClose }: EditTransactionDialogProps) => {
     const queryClient = useQueryClient()
     const { register, handleSubmit, formState: { errors, isDirty } } = useForm<UpdateTransactionInput>({

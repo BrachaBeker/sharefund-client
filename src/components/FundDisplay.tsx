@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { useCountUp } from "../hooks/useCountUp"
 import { formatMoney } from "../utils/format"
-import Icon from "./ui/Icon"
+// עיצוב – לא לוגיקה
+import { useCountUp } from "../design/useCountUp"
+import Icon from "../design/Icon"
 
 interface FundDisplayProps {
     fundBalance: number,
@@ -13,17 +14,16 @@ interface MoneyFlow {
     amount: number
 }
 
-// היקף הטבעת: רדיוס 52 בציור של 120x120
+// עיצוב – לא לוגיקה
 const RING_LENGTH = 2 * Math.PI * 52
 
-// הקופה: כרטיס סגול עם היתרה הגדולה, טבעת של כמה נשאר מכל ההפקדות, וכמה הופקד ויצא.
-// בכל שינוי ביתרה המספר רץ לערך החדש, הטבעת מתמלאת או מתרוקנת, וסכום השינוי צף למעלה
 const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
+    // עיצוב – לא לוגיקה
     const shownBalance = useCountUp(fundBalance)
+    // עיצוב – לא לוגיקה
     const [previousBalance, setPreviousBalance] = useState(fundBalance)
     const [flow, setFlow] = useState<MoneyFlow | null>(null)
 
-    // היתרה השתנתה מאז הציור הקודם: מציגים את סכום השינוי
     if (fundBalance !== previousBalance) {
         setPreviousBalance(fundBalance)
         setFlow({ id: (flow?.id ?? 0) + 1, amount: fundBalance - previousBalance })
@@ -37,13 +37,14 @@ const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
 
     return (
         <section className="relative isolate overflow-hidden rounded-3xl bg-linear-to-bl from-brand-500 via-brand-600 to-indigo-800 p-6 text-white shadow-2xl shadow-brand-700/30 sm:p-8">
+            {/* עיצוב – לא לוגיקה */}
             <span className="absolute -top-20 -left-16 -z-10 size-64 rounded-full bg-white/10" />
             <span className="absolute -right-12 -bottom-28 -z-10 size-72 rounded-full bg-fuchsia-400/20" />
 
             <div className="flex items-center justify-between gap-3">
                 <h2 className="text-lg font-semibold text-white">מצב הקופה</h2>
                 {isNegative
-                    ? <span className="badge bg-rose-500 text-white">במינוס</span>
+                    ? <span className="badge animate-pulse bg-rose-500 text-white">במינוס</span>
                     : <span className="badge bg-white/15 text-white"><span className="size-1.5 rounded-full bg-emerald-300" />תקינה</span>}
             </div>
 
@@ -55,6 +56,7 @@ const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
                         {isNegative ? "הוצא יותר ממה שהופקד. כדאי לבקש מהחברים להפקיד." : `מתוך הפקדות של ${formatMoney(totalDeposited)}`}
                     </p>
 
+                    {/* עיצוב – לא לוגיקה */}
                     {flow && (
                         <span
                             key={flow.id}
@@ -68,6 +70,7 @@ const FundDisplay = ({ fundBalance, totalDeposited }: FundDisplayProps) => {
                     )}
                 </div>
 
+                {/* עיצוב – לא לוגיקה */}
                 <div className="relative mx-auto size-32 shrink-0 sm:mx-0">
                     <svg viewBox="0 0 120 120" className="size-full -rotate-90" aria-hidden="true">
                         <circle cx="60" cy="60" r="52" fill="none" stroke="#ffffff" strokeOpacity="0.18" strokeWidth="11" />

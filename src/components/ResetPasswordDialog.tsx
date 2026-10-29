@@ -14,7 +14,6 @@ interface ResetPasswordDialogProps {
     onClose: (message?: string) => void
 }
 
-// חלון לאיפוס סיסמה של חבר (מנהל). במקום window.prompt, כדי שתהיה ולידציה ושהסיסמה לא תוצג בגלוי
 const ResetPasswordDialog = ({ groupId, member, onClose }: ResetPasswordDialogProps) => {
     const { register, handleSubmit, formState: { errors } } = useForm<{ newPassword: string }>()
 

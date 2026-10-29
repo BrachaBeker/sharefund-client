@@ -11,7 +11,6 @@ interface ConfirmDialogProps {
     danger?: boolean
 }
 
-// חלון אישור כללי: סגירת קבוצה, יציאה מהקבוצה והסרת חבר
 const ConfirmDialog = ({ title, children, onConfirm, onCancel, isPending, confirmText = "אישור", danger = false }: ConfirmDialogProps) => (
     <Modal title={title} onClose={onCancel}>
         <div className="text-sm text-slate-600">{children}</div>

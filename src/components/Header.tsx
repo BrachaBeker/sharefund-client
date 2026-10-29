@@ -5,23 +5,25 @@ import { useAuth } from "../context/useAuth"
 import { getMyGroup, getMyGroups } from "../services/api"
 import { queryKeys } from "../services/queryKeys"
 import { roleNames } from "../utils/labels"
-import Icon, { type IconName } from "./ui/Icon"
 import RoleBadge from "./ui/RoleBadge"
-import LogoMark from "./ui/LogoMark"
-import Avatar from "./ui/Avatar"
-import { useScrolled } from "../hooks/useScrolled"
 import { useUnreadCount } from "../hooks/useUnreadCount"
 import ChangeNameDialog from "./ChangeNameDialog"
+// עיצוב – לא לוגיקה
+import Icon, { type IconName } from "../design/Icon"
+import LogoMark from "../design/LogoMark"
+import Avatar from "../design/Avatar"
+import { useScrolled } from "../design/useScrolled"
 
-// הכותרת העליונה, בשלושה מצבים: אורח, מחובר בלי קבוצה, ובתוך קבוצה (עם לשוניות הקבוצה)
 const Header = () => {
     const { user, logout } = useAuth()
     const navigate = useNavigate()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
     const [isNameDialogOpen, setIsNameDialogOpen] = useState(false)
+    // עיצוב – לא לוגיקה
     const isScrolled = useScrolled()
 
+    const isLoginPage = !!useMatch("/login")
     const match = useMatch("/group/:id/*")
     const groupId = Number(match?.params.id)
     const isInGroup = !!user && !user.mustChangePassword && Number.isInteger(groupId) && groupId > 0
@@ -93,8 +95,8 @@ const Header = () => {
 
     return (
         <header className={`sticky top-0 z-40 transition-all duration-300 ${isScrolled ? "-mb-2 px-2 pt-2 sm:-mb-3 sm:px-4 sm:pt-3" : ""}`}>
-            {/* אחרי גלילה ה-Header הופך לפס צף ומעוגל. השוליים השליליים שומרים על אותו גובה, כדי שהעמוד לא יקפוץ */}
             <div className={`relative mx-auto bg-white transition-all duration-300 ${isScrolled ? "max-w-6xl rounded-2xl border border-slate-200/80 shadow-xl shadow-brand-900/10" : "max-w-full border-b border-slate-200/80"}`}>
+                {/* עיצוב – לא לוגיקה */}
                 <div className="scroll-progress absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-linear-to-l from-brand-600 via-fuchsia-500 to-accent-400" />
                 <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
                     <div className="flex min-w-0 items-center gap-3">
@@ -114,8 +116,8 @@ const Header = () => {
                     <div className="flex items-center gap-2">
                         {!user && (
                             <>
-                                <Link to="/login" className="btn-ghost">התחברות</Link>
-                                <Link to="/create-group" className="btn-primary hidden sm:inline-flex">יצירת קבוצה</Link>
+                                <Link to="/login" className={isLoginPage ? "btn-primary" : "btn-ghost"}>התחברות</Link>
+                                <Link to="/create-group" className={`${isLoginPage ? "btn-secondary" : "btn-primary"} hidden sm:inline-flex`}>יצירת קבוצה</Link>
                             </>
                         )}
 
@@ -180,7 +182,7 @@ const Header = () => {
                             >
                                 {({ isActive }) => (
                                     <>
-                                                                            <Icon name={link.icon} className={`size-4 transition ${isActive ? "text-brand-600" : "group-hover:text-accent-500"}`} />
+                                        <Icon name={link.icon} className={`size-4 transition ${isActive ? "text-brand-600" : "group-hover:text-accent-500"}`} />
                                         {link.label}
                                         {!!link.badge && unreadBadge(link.badge)}
                                         <span className={`absolute inset-x-2 -bottom-px h-[3px] rounded-t-full bg-brand-600 transition-transform duration-300 ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-50"}`} />

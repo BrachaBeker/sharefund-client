@@ -1,4 +1,3 @@
-// צבעים מדורגים לעיגולי שמות ולריבועי קבוצות, כדי שכל אחד יקבל צבע משלו
 export const gradients = [
     "from-brand-400 to-brand-600",
     "from-amber-400 to-accent-500",
@@ -8,6 +7,5 @@ export const gradients = [
     "from-rose-400 to-pink-600",
 ]
 
-// צבע קבוע לפי טקסט (למשל שם): אותו שם מקבל תמיד אותו צבע, בכל עמוד
 export const gradientFor = (text: string) =>
     gradients[[...text].reduce((sum, char) => sum + char.charCodeAt(0), 0) % gradients.length]

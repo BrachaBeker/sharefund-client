@@ -11,16 +11,15 @@ import { categoryNames, typeNames } from "../utils/labels"
 import { getErrorMessage } from "../utils/errors"
 import EditTransactionDialog from "../components/EditTransactionDialog"
 import PageHeader from "../components/ui/PageHeader"
-import ColorTile from "../components/ui/ColorTile"
-import Icon from "../components/ui/Icon"
 import SearchInput from "../components/ui/SearchInput"
 import CategoryOptions from "../components/ui/CategoryOptions"
 import { EmptyState, ErrorState, LoadingState } from "../components/ui/PageState"
+// עיצוב – לא לוגיקה
+import ColorTile from "../design/ColorTile"
+import Icon from "../design/Icon"
 
-// כמה תנועות בכל עמוד
 const PAGE_SIZE = 20
 
-// הסינונים כמו שהם בטופס (לפני ההמרה למה שנשלח לשרת)
 interface FilterForm {
     type: TransactionType | "",
     category: TransactionCategory | "",
@@ -31,10 +30,8 @@ interface FilterForm {
     sort: "newest" | "oldest"
 }
 
-// הסינונים ההתחלתיים: הכול, מהחדש לישן
 const emptyFilters: FilterForm = { type: "", category: "", userId: "", mine: false, from: "", to: "", sort: "newest" }
 
-// השם שמוצג בשורה. חבר רגיל מקבל userName רק בתנועות שלו, ובשאר מוצג טקסט כללי
 const displayName = (tx: Transaction) => {
     if (tx.userName) return tx.userName
     if (tx.isShared) return "הוצאה משותפת"
@@ -42,13 +39,11 @@ const displayName = (tx: Transaction) => {
     return "משיכה של חבר"
 }
 
-// מספרי העמודים לדפדוף: הראשון, האחרון, והעמודים שליד הנוכחי. null הוא "…" במקום עמודים שדולגו
 const pageNumbers = (current: number, total: number) => {
     const shown = [...new Set([1, current - 1, current, current + 1, total])].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b)
     return shown.flatMap((n, index) => (index > 0 && n - shown[index - 1] > 1 ? [null, n] : [n]))
 }
 
-// היסטוריה: טבלת תנועות עם סינונים, דפדוף ועריכה
 const History = () => {
     const { groupId, group } = useCurrentGroup()
     const isManager = group.role === "manager"

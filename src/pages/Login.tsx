@@ -6,18 +6,17 @@ import { useAuth } from "../context/useAuth"
 import { getPathAfterLogin } from "../utils/navigation"
 import { emailRules, passwordRules } from "../utils/validation"
 import { demoUsers } from "../utils/demoUsers"
-import { gradients } from "../utils/colors"
 import type { LoginInput } from "../types"
 import AuthCard from "../components/ui/AuthCard"
 import FormField from "../components/ui/FormField"
 import Alert from "../components/ui/Alert"
+// עיצוב – לא לוגיקה
+import { gradients } from "../design/colors"
 
-// עמוד הכניסה
 const Login = () => {
     const { user, login } = useAuth()
     const navigate = useNavigate()
     const [errorMessage, setErrorMessage] = useState("")
-    // true מתחילת הכניסה ועד המעבר לעמוד הבא, כדי שההפניה של משתמש מחובר לא תקדים את המעבר הנכון
     const [isLoggingIn, setIsLoggingIn] = useState(false)
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<LoginInput>()
 
@@ -33,7 +32,6 @@ const Login = () => {
         }
     }
 
-    // כניסה מהירה: ממלאים את הטופס בפרטי משתמש הדמו ושולחים אותו
     const loginAsDemo = ({ email, password }: LoginInput) => {
         setValue("email", email)
         setValue("password", password)

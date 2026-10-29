@@ -12,7 +12,6 @@ import NotFound from "../pages/NotFound"
 import ProtectedRoute from "./ProtectedRoute"
 import GroupLayout from "./GroupLayout"
 
-// כל הנתיבים של האתר
 const AppRoutes = () => useRoutes([
     { path: "/", element: <Home /> },
     { path: "/login", element: <Login /> },

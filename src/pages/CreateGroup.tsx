@@ -12,8 +12,9 @@ import MemberFields from "../components/MemberFields"
 import FormField from "../components/ui/FormField"
 import PageHeader from "../components/ui/PageHeader"
 import Alert from "../components/ui/Alert"
-import Icon from "../components/ui/Icon"
 import { LoadingState } from "../components/ui/PageState"
+// עיצוב – לא לוגיקה
+import Icon from "../design/Icon"
 
 interface CreateGroupForm {
     groupName: string,
@@ -21,16 +22,12 @@ interface CreateGroupForm {
     members: NewMemberInput[]
 }
 
-// מינימום חברים חוץ מהמנהל (כמו בשרת: יחד עם המנהל לפחות 3)
 const MIN_MEMBERS = 2
 
-// משווים מיילים בלי הבדל בין אותיות גדולות לקטנות ובלי רווחים
 const normalizeEmail = (email: string) => email.trim().toLowerCase()
 
-// מכין חבר לשליחה: בלי רווחים מיותרים בשם ובמייל (הסיסמה נשלחת כמו שהיא)
 const cleanMember = (member: NewMemberInput): NewMemberInput => ({ name: member.name.trim(), email: member.email.trim(), password: member.password })
 
-// הוספת קבוצה חדשה: אורח ממלא גם את פרטי המנהל, מחובר ממלא רק את שם הקבוצה והחברים
 const CreateGroup = () => {
     const { user, isLoading: isAuthLoading, loginWithToken } = useAuth()
     const isGuest = !user
@@ -190,7 +187,6 @@ interface SectionTitleProps {
     link?: boolean
 }
 
-// כותרת של חלק בטופס: עיגול עם מספר, כותרת והסבר
 const SectionTitle = ({ step, title, text, link }: SectionTitleProps) => (
     <div className="flex items-start gap-3">
         <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700 ring-1 ring-brand-200">{step}</span>

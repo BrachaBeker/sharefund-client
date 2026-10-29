@@ -8,7 +8,8 @@ import { getErrorMessage } from "../utils/errors"
 import { amountClass, formatMoney } from "../utils/format"
 import ConfirmDialog from "./ConfirmDialog"
 import Alert from "./ui/Alert"
-import Icon from "./ui/Icon"
+// עיצוב – לא לוגיקה
+import Icon from "../design/Icon"
 
 interface GroupActionsProps {
     groupId: number,
@@ -16,7 +17,6 @@ interface GroupActionsProps {
     myBalance: number
 }
 
-// יציאה מהקבוצה (לחבר, רק ביתרה 0) וסגירת הקבוצה (למנהל)
 const GroupActions = ({ groupId, role, myBalance }: GroupActionsProps) => {
     const navigate = useNavigate()
     const queryClient = useQueryClient()

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
-import Icon, { type IconName } from "./Icon"
+// עיצוב – לא לוגיקה
+import Icon, { type IconName } from "../../design/Icon"
 
-// מצב טעינה: עיגול מסתובב וטקסט. מופיע גם כשהשרת "ישן" והתשובה לוקחת זמן
 export const LoadingState = ({ text = "טוען..." }: { text?: string }) => (
     <div className="flex flex-col items-center justify-center gap-3 py-16 text-slate-500" role="status">
         <span className="size-8 animate-spin rounded-full border-[3px] border-slate-200 border-t-brand-600" />
@@ -17,7 +17,6 @@ interface StateProps {
     icon?: IconName
 }
 
-// מצב ריק: "עוד אין תנועות", "עוד אין הודעות"
 export const EmptyState = ({ title, text, action, icon = "info" }: StateProps) => (
     <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
         <span className="mb-1 grid size-11 place-items-center rounded-full bg-slate-100 text-slate-400">
@@ -29,7 +28,6 @@ export const EmptyState = ({ title, text, action, icon = "info" }: StateProps) =
     </div>
 )
 
-// מצב שגיאה: הטעינה מהשרת נכשלה
 export const ErrorState = ({ title, text, action, icon = "warning" }: StateProps) => (
     <div className="flex flex-col items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-6 py-12 text-center">
         <span className="mb-1 grid size-11 place-items-center rounded-full bg-rose-100 text-rose-600">

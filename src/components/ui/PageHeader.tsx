@@ -7,7 +7,6 @@ interface PageHeaderProps {
     actions?: ReactNode
 }
 
-// כותרת אחידה לכל העמודים: שורה קטנה מעל (לא חובה), כותרת, הסבר, וכפתורים בצד
 const PageHeader = ({ title, eyebrow, subtitle, actions }: PageHeaderProps) => (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>

@@ -1,11 +1,9 @@
 import axios from "axios"
 import type { ApiError } from "../types"
 
-// השגיאה מהשרת במבנה { error: { code, message, details } }, או undefined אם זו לא שגיאה מהשרת
 export const getApiError = (err: unknown) =>
     axios.isAxiosError<ApiError>(err) ? err.response?.data?.error : undefined
 
-// הודעה בעברית להצגה למשתמש: ההודעה מהשרת, או הודעה כללית
 export const getErrorMessage = (err: unknown) => {
     const apiError = getApiError(err)
     if (apiError?.message) return apiError.message

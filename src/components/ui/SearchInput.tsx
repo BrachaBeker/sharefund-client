@@ -1,4 +1,5 @@
-import Icon from "./Icon"
+// עיצוב – לא לוגיקה
+import Icon from "../../design/Icon"
 
 interface SearchInputProps {
     value: string,
@@ -7,7 +8,6 @@ interface SearchInputProps {
     className?: string
 }
 
-// שדה חיפוש עם סמל זכוכית מגדלת בתוכו. משמש ברשימת החברים ובהיסטוריה
 const SearchInput = ({ value, onChange, placeholder, className = "" }: SearchInputProps) => (
     <div className={`relative ${className}`}>
         <span className="pointer-events-none absolute inset-y-0 start-3 grid place-items-center text-slate-400"><Icon name="search" className="size-4" /></span>

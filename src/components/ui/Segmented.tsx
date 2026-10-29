@@ -7,7 +7,6 @@ interface SegmentedProps<T extends string> {
     className?: string
 }
 
-// בחירה אחת מכמה אפשרויות צמודות: תיבות ההודעות, נמענים, סינון יתרות וסוג פעולה ברישום המרוכז
 const Segmented = <T extends string>({ label, options, value, onChange, disabled, className = "" }: SegmentedProps<T>) => (
     <div role="group" aria-label={label} className={`inline-flex rounded-full bg-slate-100 p-1 ${className}`}>
         {options.map((option) => (

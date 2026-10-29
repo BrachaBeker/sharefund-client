@@ -7,7 +7,6 @@ interface RevealProps {
     className?: string
 }
 
-// מציג את התוכן כשהוא נכנס למסך בגלילה, פעם אחת בלבד: rise עולה בעדינות, draw נחשף מלמעלה למטה (לקווים). delay במילישניות, ליצירת הופעה מדורגת
 const Reveal = ({ children, delay = 0, effect = "rise", className = "" }: RevealProps) => {
     const ref = useRef<HTMLDivElement>(null)
     const [isVisible, setIsVisible] = useState(false)

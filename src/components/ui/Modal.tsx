@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from "react"
-import Icon from "./Icon"
+// עיצוב – לא לוגיקה
+import Icon from "../../design/Icon"
 
 interface ModalProps {
     title: string,
@@ -7,7 +8,6 @@ interface ModalProps {
     onClose: () => void
 }
 
-// חלון קופץ כללי. משמש את ConfirmDialog ואת חלונות העריכה, כדי לא לכתוב את המבנה שוב בכל חלון
 const Modal = ({ title, children, onClose }: ModalProps) => {
     useEffect(() => {
         const handleKey = (event: KeyboardEvent) => {

@@ -9,20 +9,21 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue"
 import { amountClass, formatDate, formatMoney } from "../utils/format"
 import { getErrorMessage } from "../utils/errors"
 import { balanceStatusNames } from "../utils/labels"
-import { gradientFor } from "../utils/colors"
 import AddMemberForm from "../components/AddMemberForm"
 import BulkTransactions from "../components/BulkTransactions"
 import ConfirmDialog from "../components/ConfirmDialog"
 import ResetPasswordDialog from "../components/ResetPasswordDialog"
 import PageHeader from "../components/ui/PageHeader"
 import Alert from "../components/ui/Alert"
-import Icon from "../components/ui/Icon"
 import SearchInput from "../components/ui/SearchInput"
 import RoleBadge from "../components/ui/RoleBadge"
-import Avatar from "../components/ui/Avatar"
 import Segmented from "../components/ui/Segmented"
-import ColorTile from "../components/ui/ColorTile"
 import { EmptyState, ErrorState, LoadingState } from "../components/ui/PageState"
+// עיצוב – לא לוגיקה
+import { gradientFor } from "../design/colors"
+import Icon from "../design/Icon"
+import Avatar from "../design/Avatar"
+import ColorTile from "../design/ColorTile"
 
 type BalanceFilter = NonNullable<MembersFilters["balanceStatus"]> | "all"
 
@@ -31,7 +32,6 @@ const balanceOptions: { value: BalanceFilter, label: string }[] = [
     ...(["debt", "zero", "credit"] as const).map((status) => ({ value: status, label: balanceStatusNames[status] })),
 ]
 
-// רשימת החברים: תצוגה מלאה למנהל, ותצוגה מצומצמת לחבר
 const Members = () => {
     const { groupId, group } = useCurrentGroup()
     const isManager = group.role === "manager"
@@ -51,7 +51,6 @@ const Members = () => {
     }
 
     const { data: members, isLoading, isError, error } = useMembers(groupId, isManager ? filters : {})
-    // כל החברים בלי סינון: לסיכום שבראש העמוד ולרישום המרוכז
     const { data: allMembers } = useMembers(groupId, {}, isManager)
     const everyone = (allMembers ?? []) as MemberFull[]
     const inCredit = everyone.filter((member) => member.balance > 0)

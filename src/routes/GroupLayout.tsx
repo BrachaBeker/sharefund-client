@@ -6,8 +6,6 @@ import { getErrorMessage } from "../utils/errors"
 import { ErrorState, LoadingState } from "../components/ui/PageState"
 import type { CurrentGroup } from "../hooks/useCurrentGroup"
 
-// עוטף את כל העמודים של קבוצה (/group/:id/...).
-// בודק את ה-id, טוען את הקבוצה פעם אחת ומטפל בטעינה ובשגיאה, כדי שכל עמוד לא יעשה את זה שוב.
 const GroupLayout = () => {
     const groupId = Number(useParams().id)
     const { pathname } = useLocation()

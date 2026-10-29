@@ -5,16 +5,16 @@ import { queryKeys } from "../services/queryKeys"
 import { useAuth } from "../context/useAuth"
 import { amountClass, formatMoney } from "../utils/format"
 import { getErrorMessage } from "../utils/errors"
-import { gradients } from "../utils/colors"
 import PageHeader from "../components/ui/PageHeader"
-import Icon from "../components/ui/Icon"
 import RoleBadge from "../components/ui/RoleBadge"
-import Avatar from "../components/ui/Avatar"
-import Reveal from "../components/ui/Reveal"
-import { trackPointer } from "../utils/spotlight"
 import { EmptyState, ErrorState, LoadingState } from "../components/ui/PageState"
+// עיצוב – לא לוגיקה
+import { gradients } from "../design/colors"
+import Icon from "../design/Icon"
+import Avatar from "../design/Avatar"
+import Reveal from "../design/Reveal"
+import { trackPointer } from "../design/spotlight"
 
-// בחירת קבוצה: כרטיס לכל קבוצה עם התפקיד והיתרה שלי
 const SelectGroup = () => {
     const { user } = useAuth()
     const { data: groups, isLoading, isError, error } = useQuery({ queryKey: queryKeys.myGroups, queryFn: getMyGroups })
@@ -34,6 +34,7 @@ const SelectGroup = () => {
                 <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {groups.map((group, index) => (
                         <li key={group.id}>
+                            {/* עיצוב – לא לוגיקה */}
                             <Reveal delay={index * 80} className="h-full">
                                 <Link
                                     to={`/group/${group.id}/dashboard`}

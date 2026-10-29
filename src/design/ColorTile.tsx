@@ -17,7 +17,6 @@ interface ColorTileProps {
     to?: string
 }
 
-// אריח צבעוני עם נתון אחד. עם to הוא גם קישור, ומתרומם במעבר עכבר
 const ColorTile = ({ label, value, hint, icon, tone, to }: ColorTileProps) => {
     const content = (
         <>

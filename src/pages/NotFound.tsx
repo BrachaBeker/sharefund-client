@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom"
 import { EmptyState } from "../components/ui/PageState"
 
-// עמוד לכתובת שלא קיימת באתר
 const NotFound = () => (
     <EmptyState
         title="העמוד לא נמצא"

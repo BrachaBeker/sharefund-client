@@ -4,7 +4,6 @@ import type { LoginInput, User } from "../types"
 import { getMe, getToken, login as loginRequest, removeToken, setToken } from "../services/api"
 import { AuthContext, type AuthContextType } from "./useAuth"
 
-// הקומפוננטה שעוטפת את כל האפליקציה ומחזיקה את המשתמש המחובר
 const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(true)

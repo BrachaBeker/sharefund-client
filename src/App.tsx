@@ -1,14 +1,15 @@
 import { useLocation } from "react-router-dom"
 import AppRoutes from "./routes/AppRoutes"
 import Header from "./components/Header"
-import LogoMark from "./components/ui/LogoMark"
-import Icon from "./components/ui/Icon"
-import { useScrolled } from "./hooks/useScrolled"
+// עיצוב – לא לוגיקה
+import LogoMark from "./design/LogoMark"
+import Icon from "./design/Icon"
+import { useScrolled } from "./design/useScrolled"
 
-// המבנה של כל עמוד: Header למעלה, התוכן באמצע, שורה תחתונה וכפתור חזרה למעלה
 const App = () => {
+    // עיצוב – לא לוגיקה
     const showBackToTop = useScrolled(600)
-    // עמודי קבוצה מקבלים את המעבר ב-GroupLayout, כדי שהקבוצה לא תיטען מחדש בכל לשונית
+    // עיצוב – לא לוגיקה
     const { pathname } = useLocation()
     const pageKey = pathname.startsWith("/group/") ? pathname.split("/").slice(0, 3).join("/") : pathname
 
@@ -16,11 +17,13 @@ const App = () => {
         <div className="flex min-h-screen flex-col">
             <Header />
             <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-10">
+                {/* עיצוב – לא לוגיקה */}
                 <div key={pageKey} className="page-enter">
                     <AppRoutes />
                 </div>
             </main>
             <footer className="mt-10 bg-ink text-sm text-white/70">
+                {/* עיצוב – לא לוגיקה */}
                 <div className="h-1 bg-linear-to-l from-brand-500 via-fuchsia-500 to-accent-400" />
                 <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-8 text-center sm:flex-row sm:justify-between sm:px-6">
                     <span className="flex items-center gap-2">
@@ -31,7 +34,7 @@ const App = () => {
                 </div>
             </footer>
 
-            {/* כפתור חזרה למעלה, מופיע אחרי גלילה ארוכה */}
+            {/* עיצוב – לא לוגיקה */}
             <button
                 type="button"
                 onClick={() => window.scrollTo({ top: 0 })}

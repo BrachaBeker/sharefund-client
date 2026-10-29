@@ -9,8 +9,6 @@ interface MemberFieldsProps {
     disabled?: boolean
 }
 
-// שלושת השדות של אדם: שם, מייל וסיסמה.
-// משמשת בהוספת חבר לקבוצה, וביצירת קבוצה (למנהל ולכל אחד מהחברים).
 const MemberFields = ({ idPrefix, fields, errors, passwordLabel = "סיסמה זמנית", disabled = false }: MemberFieldsProps) => (
     <div className="grid gap-3 sm:grid-cols-3">
         <FormField label="שם" htmlFor={`${idPrefix}-name`} error={errors?.name?.message}>

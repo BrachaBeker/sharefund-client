@@ -12,7 +12,8 @@ import { amountRules, noteRules } from "../utils/validation"
 import FormField from "./ui/FormField"
 import CardTitle from "./ui/CardTitle"
 import Alert from "./ui/Alert"
-import Icon, { type IconName } from "./ui/Icon"
+// עיצוב – לא לוגיקה
+import Icon, { type IconName } from "../design/Icon"
 
 const typeCards: { type: TransactionType, icon: IconName, text: string, color: string, glow: string }[] = [
     { type: "deposit", icon: "arrowDown", text: "מכניסים כסף לקופה", color: "from-emerald-400 to-teal-600", glow: "ring-emerald-300 shadow-emerald-500/30" },
@@ -21,7 +22,6 @@ const typeCards: { type: TransactionType, icon: IconName, text: string, color: s
 
 const quickAmounts = [20, 50, 100, 200]
 
-// הפקדה או משיכה של המשתמש המחובר (באזור האישי): בוחרים סוג, סכום וקטגוריה, ורואים מראש איך הקופה תשתנה
 const TransactionForm = ({ groupId }: { groupId: number }) => {
     const queryClient = useQueryClient()
     const { group } = useCurrentGroup()
@@ -59,7 +59,6 @@ const TransactionForm = ({ groupId }: { groupId: number }) => {
     const onSubmit = (input: CreateTransactionInput) =>
         mutation.mutate({ groupId, input: { ...input, type: type!, isShared: type === "withdraw" && !isPersonal } })
 
-    // התצוגה המקדימה: הקופה זזה בכל הסכום. היתרה שלי זזה בכל הסכום, חוץ מהוצאה משותפת שמתחלקת בין כל החברים
     const sign = type === "deposit" ? 1 : -1
     const fundAfter = group.fundBalance + sign * validAmount
     const myChange = type === "withdraw" && !isPersonal ? -validAmount / group.membersCount : sign * validAmount

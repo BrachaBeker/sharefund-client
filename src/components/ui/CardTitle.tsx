@@ -6,7 +6,6 @@ interface CardTitleProps {
     actions?: ReactNode
 }
 
-// כותרת אחידה בראש כל כרטיס: כותרת, הסבר קצר, ותג או כפתור בצד
 const CardTitle = ({ title, subtitle, actions }: CardTitleProps) => (
     <div className="mb-5 flex items-start justify-between gap-3">
         <div>

@@ -16,7 +16,6 @@ interface AddMemberFormProps {
     onCancel: () => void
 }
 
-// טופס הוספת חבר לקבוצה (מנהל)
 const AddMemberForm = ({ groupId, onCancel }: AddMemberFormProps) => {
     const queryClient = useQueryClient()
     const { register, handleSubmit, reset, formState: { errors } } = useForm<NewMemberInput>({ defaultValues: emptyMember })

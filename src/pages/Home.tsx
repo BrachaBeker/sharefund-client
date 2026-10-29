@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom"
 import { useAuth } from "../context/useAuth"
-import Icon, { type IconName } from "../components/ui/Icon"
 import FundDisplay from "../components/FundDisplay"
-import Reveal from "../components/ui/Reveal"
-import { trackPointer } from "../utils/spotlight"
+// עיצוב – לא לוגיקה
+import Icon, { type IconName } from "../design/Icon"
+import Reveal from "../design/Reveal"
+import { trackPointer } from "../design/spotlight"
 
 const highlights = ["בלי חישובים ידניים ובלי ויכוחים", "כל חבר רואה את היתרה שלו", "חינם, פותחים קבוצה בדקה"]
 
@@ -20,14 +21,13 @@ const steps: { title: string, text: string, icon: IconName, bubble: string, plac
     { title: "עוקבים בזמן אמת", text: "הקופה, היתרות וההיסטוריה מתעדכנות מיד אחרי כל פעולה.", icon: "check", bubble: "from-emerald-400 to-teal-600", place: "lg:col-start-1 lg:row-start-3 lg:justify-self-start" },
 ]
 
-// עיגולים צבעוניים שמרחפים סביב הקופה בראש הדף
+// עיצוב – לא לוגיקה
 const bubbles: { icon: IconName, className: string }[] = [
     { icon: "users", className: "-top-7 left-10 bg-sky-500 [animation-delay:-1s]" },
     { icon: "arrowDown", className: "top-[42%] -left-7 bg-accent-400 [animation-delay:-3s]" },
     { icon: "check", className: "-bottom-7 left-10 bg-emerald-500 [animation-delay:-4.5s]" },
 ]
 
-// דף הבית: הסבר קצר על המערכת, דוגמה של הקופה, וקישורים לכניסה וליצירת קבוצה
 const Home = () => {
     const { user } = useAuth()
     const startLink = user
@@ -64,6 +64,7 @@ const Home = () => {
                     </div>
                 </div>
 
+                {/* עיצוב – לא לוגיקה */}
                 <div className="rise-in relative isolate mx-auto w-full max-w-md select-none [animation-delay:250ms]" aria-hidden="true">
                     <div className="absolute -inset-x-10 -inset-y-8 -z-10 rounded-[46%_54%_42%_58%/55%_45%_55%_45%] bg-brand-100/80" />
                     <div className="absolute -bottom-14 -left-8 -z-10 size-44 rounded-full bg-emerald-100" />
@@ -88,6 +89,7 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* עיצוב – לא לוגיקה */}
             <section className="rounded-[2.5rem] bg-linear-to-br from-brand-100/70 via-white to-accent-100/70 px-5 py-14 sm:px-10">
                 <Reveal className="mb-12 text-center">
                     <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">מה יש בפנים?</h2>
@@ -113,6 +115,7 @@ const Home = () => {
                 </Reveal>
 
                 <div className="relative isolate grid gap-12 lg:grid-cols-2 lg:gap-y-6">
+                    {/* עיצוב – לא לוגיקה */}
                     <Reveal effect="draw" className="absolute inset-0 -z-10 hidden lg:block">
                         <svg className="size-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                             <path d="M 70 16 H 22 V 45" className="dash-flow" fill="none" stroke="#34d399" strokeWidth="2" strokeDasharray="7 7" vectorEffect="non-scaling-stroke" />
@@ -137,6 +140,7 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* עיצוב – לא לוגיקה */}
             <Reveal>
                 <section className="relative isolate px-6 py-20 text-center text-white sm:px-12">
                     <div className="absolute inset-0 -z-10 skew-y-0 overflow-hidden rounded-[2.5rem] bg-ink transition-transform delay-300 duration-1000 ease-out in-[.is-visible]:-skew-y-2" aria-hidden="true">

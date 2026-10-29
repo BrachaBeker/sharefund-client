@@ -9,14 +9,15 @@ import { useMembers } from "../hooks/useMembers"
 import { formatDateTime } from "../utils/format"
 import { boxNames } from "../utils/labels"
 import { getErrorMessage } from "../utils/errors"
-import { gradientFor } from "../utils/colors"
 import { messageRules } from "../utils/validation"
 import PageHeader from "../components/ui/PageHeader"
 import Alert from "../components/ui/Alert"
-import Icon from "../components/ui/Icon"
-import Avatar from "../components/ui/Avatar"
 import Segmented from "../components/ui/Segmented"
 import { EmptyState, ErrorState, LoadingState } from "../components/ui/PageState"
+// עיצוב – לא לוגיקה
+import { gradientFor } from "../design/colors"
+import Icon from "../design/Icon"
+import Avatar from "../design/Avatar"
 
 type Box = NonNullable<MessagesFilters["box"]>
 type RecipientMode = "all" | "selected"
@@ -28,7 +29,6 @@ const recipientModeOptions: { value: RecipientMode, label: string }[] = [
     { value: "selected", label: "לחברים נבחרים" },
 ]
 
-// הודעות: רשימה מהחדשה לישנה, כתיבה, ובחירת נמענים למנהל
 const Messages = () => {
     const { groupId, group } = useCurrentGroup()
     const isManager = group.role === "manager"
@@ -96,7 +96,6 @@ interface MessageCardProps {
     onToggle: () => void
 }
 
-// כרטיס של הודעה אחת
 const MessageCard = ({ message, isOpen, onToggle }: MessageCardProps) => {
     const isNew = message.direction === "received" && message.isRead === false
     const isSent = message.direction === "sent"
@@ -117,7 +116,7 @@ const MessageCard = ({ message, isOpen, onToggle }: MessageCardProps) => {
                         <p className={isNew ? "font-bold text-ink" : "font-semibold text-slate-700"}>
                             {isSent ? `אל: ${message.toAll ? "כל הקבוצה" : message.recipients?.map((r) => r.name).join(", ")}` : message.sender.name}
                         </p>
-                        {isNew && <span className="badge bg-brand-600 text-white">חדש</span>}
+                        {isNew && <span className="badge animate-pulse bg-brand-600 text-white">חדש</span>}
                         {!isSent && message.toAll && <span className="badge bg-slate-100 text-slate-500">לכל הקבוצה</span>}
                         <span className="ms-auto flex items-center gap-1 text-xs text-slate-400">
                             {formatDateTime(message.createdAt)}
@@ -148,7 +147,6 @@ interface ComposeMessageProps {
     managerName: string
 }
 
-// טופס כתיבת הודעה
 const ComposeMessage = ({ groupId, isManager, managerName }: ComposeMessageProps) => {
     const queryClient = useQueryClient()
     const { register, handleSubmit, reset, control, formState: { errors } } = useForm<{ content: string }>({ defaultValues: { content: "" } })

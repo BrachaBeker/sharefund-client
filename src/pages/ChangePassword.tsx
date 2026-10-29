@@ -11,10 +11,8 @@ import AuthCard from "../components/ui/AuthCard"
 import FormField from "../components/ui/FormField"
 import Alert from "../components/ui/Alert"
 
-// הטופס: שני השדות של הבקשה, ועוד שדה אימות שלא נשלח לשרת
 type ChangePasswordForm = ChangePasswordInput & { confirmPassword: string }
 
-// עמוד שינוי הסיסמה (גם החלפה חובה של סיסמה זמנית)
 const ChangePassword = () => {
     const { user, setUser } = useAuth()
     const navigate = useNavigate()

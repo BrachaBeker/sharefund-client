@@ -6,7 +6,6 @@ import type {
     Transaction, TransactionsFilters, TransactionsPage, UpdateTransactionInput, User, LoginInput
 } from "../types"
 
-// הטוקן נשמר ב-sessionStorage: הוא נמחק כשסוגרים את הלשונית, כך שבמחשב משותף המשתמש הבא לא נשאר מחובר
 const TOKEN_KEY = "token"
 const getToken = () => sessionStorage.getItem(TOKEN_KEY)
 const setToken = (token: string) => sessionStorage.setItem(TOKEN_KEY, token)
@@ -20,8 +19,6 @@ api.interceptors.request.use((config) => {
     return config
 })
 
-// 401 = הטוקן חסר או פג תוקף: מוחקים אותו ועוברים לכניסה.
-// בבקשת הכניסה עצמה 401 פירושו סיסמה שגויה, ואז רק מציגים את השגיאה
 const onError = (error: AxiosError) => {
     if (error.response?.status === 401 && error.config?.url !== "/auth/login") {
         removeToken()
@@ -31,7 +28,6 @@ const onError = (error: AxiosError) => {
 }
 api.interceptors.response.use((response) => response, onError)
 
-// ---- auth ----
 
 const login = async (input: LoginInput) =>
     (await api.post<{ token: string, user: User }>("/auth/login", input)).data
@@ -42,7 +38,6 @@ const updateMe = async ({ name }: { name: string }) =>
 const changePassword = async (input: ChangePasswordInput) =>
     (await api.post<{ user: User }>("/auth/change-password", input)).data.user
 
-// ---- groups ----
 
 const createGroup = async (input: CreateGroupInput) =>
     (await api.post<CreateGroupResponse>("/groups", input)).data
@@ -56,9 +51,7 @@ const leaveGroup = async ({ groupId }: { groupId: number }) => {
     await api.post(`/groups/${groupId}/leave`)
 }
 
-// ---- members ----
 
-// רשימת החברים. מנהל מקבל MemberFull, חבר מקבל MemberBasic. filters נשלחים כ-query string
 const getMembers = async ({ groupId, filters }: { groupId: number, filters?: MembersFilters }) =>
     (await api.get<{ members: MemberFull[] | MemberBasic[] }>(`/groups/${groupId}/members`, { params: filters })).data.members
 const addMember = async ({ groupId, input }: { groupId: number, input: NewMemberInput }) =>
@@ -70,7 +63,6 @@ const resetMemberPassword = async ({ groupId, userId, newPassword }: { groupId: 
     await api.post(`/groups/${groupId}/members/${userId}/reset-password`, { newPassword })
 }
 
-// ---- transactions ----
 
 const getTransactions = async ({ groupId, filters }: { groupId: number, filters?: TransactionsFilters }) =>
     (await api.get<TransactionsPage>(`/groups/${groupId}/transactions`, { params: filters })).data
@@ -81,7 +73,6 @@ const createBulkTransactions = async ({ groupId, input }: { groupId: number, inp
 const updateTransaction = async ({ groupId, transactionId, input }: { groupId: number, transactionId: number, input: UpdateTransactionInput }) =>
     (await api.patch<{ transaction: Transaction }>(`/groups/${groupId}/transactions/${transactionId}`, input)).data.transaction
 
-// ---- messages ----
 
 const getMessages = async ({ groupId, filters }: { groupId: number, filters?: MessagesFilters }) =>
     (await api.get<MessagesResponse>(`/groups/${groupId}/messages`, { params: filters })).data

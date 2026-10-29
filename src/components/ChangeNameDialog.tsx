@@ -8,7 +8,6 @@ import Modal from "./ui/Modal"
 import FormField from "./ui/FormField"
 import Alert from "./ui/Alert"
 
-// חלון לשינוי השם של המשתמש המחובר (נפתח מתפריט המשתמש ב-Header)
 const ChangeNameDialog = ({ onClose }: { onClose: () => void }) => {
     const { user, setUser } = useAuth()
     const { register, handleSubmit, formState: { errors } } = useForm<{ name: string }>({ defaultValues: { name: user?.name ?? "" } })

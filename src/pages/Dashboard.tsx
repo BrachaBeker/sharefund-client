@@ -2,7 +2,6 @@ import { useState } from "react"
 import { useLocation } from "react-router-dom"
 import { useAuth } from "../context/useAuth"
 import { useCurrentGroup } from "../hooks/useCurrentGroup"
-import { useCountUp } from "../hooks/useCountUp"
 import { useUnreadCount } from "../hooks/useUnreadCount"
 import { roleNames } from "../utils/labels"
 import { formatMoney } from "../utils/format"
@@ -10,11 +9,12 @@ import FundDisplay from "../components/FundDisplay"
 import TransactionForm from "../components/TransactionForm"
 import GroupActions from "../components/GroupActions"
 import PageHeader from "../components/ui/PageHeader"
-import ColorTile from "../components/ui/ColorTile"
 import Alert from "../components/ui/Alert"
-import Reveal from "../components/ui/Reveal"
+// עיצוב – לא לוגיקה
+import { useCountUp } from "../design/useCountUp"
+import ColorTile from "../design/ColorTile"
+import Reveal from "../design/Reveal"
 
-// התאריך של היום וברכה לפי השעה. מחושב פעם אחת כשהעמוד נפתח
 const getToday = () => {
     const now = new Date()
     const hour = now.getHours()
@@ -22,13 +22,13 @@ const getToday = () => {
     return { greeting, date: now.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" }) }
 }
 
-// האזור האישי: הקופה, אריחים עם הנתונים שלי, הפקדה ומשיכה
 const Dashboard = () => {
     const { user } = useAuth()
     const { groupId, group } = useCurrentGroup()
     const notice = (useLocation().state as { notice?: string } | null)?.notice
     const unreadCount = useUnreadCount(groupId)
     const balance = group.myBalance
+    // עיצוב – לא לוגיקה
     const shownBalance = useCountUp(balance)
     const [today] = useState(getToday)
 
@@ -48,6 +48,7 @@ const Dashboard = () => {
                 </Alert>
             )}
 
+            {/* עיצוב – לא לוגיקה */}
             <div className="grid gap-5 lg:grid-cols-5">
                 <Reveal className="lg:col-span-3">
                     <FundDisplay fundBalance={group.fundBalance} totalDeposited={group.totalDeposited} />
@@ -102,6 +103,7 @@ const Dashboard = () => {
 
             {group.isActive && (
                 <div className="mt-8 space-y-6">
+                    {/* עיצוב – לא לוגיקה */}
                     <Reveal><TransactionForm groupId={groupId} /></Reveal>
                     <Reveal><GroupActions groupId={groupId} role={group.role} myBalance={group.myBalance} /></Reveal>
                 </div>

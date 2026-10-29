@@ -9,7 +9,6 @@ interface FormFieldProps {
     className?: string
 }
 
-// שדה בטופס: תווית, השדה, ומתחתיו שגיאה או טקסט עזר. משמש בכל הטפסים באתר
 const FormField = ({ label, htmlFor, error, hint, children, className = "" }: FormFieldProps) => (
     <div className={className}>
         <label htmlFor={htmlFor} className="label">{label}</label>
