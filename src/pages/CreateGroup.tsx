@@ -1,4 +1,4 @@
-import { useFieldArray, useForm } from "react-hook-form"
+import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, Navigate, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/useAuth"
@@ -15,6 +15,8 @@ import Alert from "../components/ui/Alert"
 import { LoadingState } from "../components/ui/PageState"
 // עיצוב – לא לוגיקה
 import Icon from "../design/Icon"
+import GroupPreview from "../design/GroupPreview"
+import { gradients } from "../design/colors"
 
 interface CreateGroupForm {
     groupName: string,
@@ -42,6 +44,8 @@ const CreateGroup = () => {
         name: "members",
         rules: { minLength: { value: MIN_MEMBERS, message: `צריך לפחות ${MIN_MEMBERS} חברים חוץ מהמנהל` } }
     })
+    // עיצוב – לא לוגיקה
+    const preview = useWatch({ control })
 
     const mutation = useMutation({
         mutationFn: createGroup,
@@ -71,111 +75,123 @@ const CreateGroup = () => {
     if (user?.mustChangePassword) return <Navigate to="/change-password" replace />
 
     return (
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-6xl">
             <PageHeader
                 title="קבוצה חדשה"
                 subtitle={isGuest ? "נרשמים כמנהל/ת, נותנים שם לקבוצה ומוסיפים את החברים." : `את/ה (${user.name}) תהיה/י המנהל/ת של הקבוצה.`}
             />
 
-            <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
-                {isGuest && (
+            {/* עיצוב – לא לוגיקה */}
+            <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
+                <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+                    {isGuest && (
+                        <section className="card space-y-4">
+                            <SectionTitle step={1} title="הפרטים שלך (המנהל/ת)" text="איתם תיכנס/י לאתר. כבר רשום/ה? אפשר" link />
+                            <MemberFields
+                                idPrefix="manager"
+                                passwordLabel="סיסמה"
+                                fields={{
+                                    name: register("manager.name", nameRules),
+                                    email: register("manager.email", emailRules),
+                                    password: register("manager.password", newPasswordRules),
+                                }}
+                                errors={errors.manager}
+                                disabled={mutation.isPending}
+                            />
+                        </section>
+                    )}
+
                     <section className="card space-y-4">
-                        <SectionTitle step={1} title="הפרטים שלך (המנהל/ת)" text="איתם תיכנס/י לאתר. כבר רשום/ה? אפשר" link />
-                        <MemberFields
-                            idPrefix="manager"
-                            passwordLabel="סיסמה"
-                            fields={{
-                                name: register("manager.name", nameRules),
-                                email: register("manager.email", emailRules),
-                                password: register("manager.password", newPasswordRules),
-                            }}
-                            errors={errors.manager}
-                            disabled={mutation.isPending}
-                        />
+                        <SectionTitle step={isGuest ? 2 : 1} title="שם הקבוצה" />
+                        <FormField label="שם הקבוצה" htmlFor="group-name" error={errors.groupName?.message} className="max-w-md">
+                            <input id="group-name" className="input" placeholder="למשל: קופת ועד הכיתה" disabled={mutation.isPending} {...register("groupName", groupNameRules)} />
+                        </FormField>
                     </section>
-                )}
 
-                <section className="card space-y-4">
-                    <SectionTitle step={isGuest ? 2 : 1} title="שם הקבוצה" />
-                    <FormField label="שם הקבוצה" htmlFor="group-name" error={errors.groupName?.message} className="max-w-md">
-                        <input id="group-name" className="input" placeholder="למשל: קופת ועד הכיתה" disabled={mutation.isPending} {...register("groupName", groupNameRules)} />
-                    </FormField>
-                </section>
+                    <section className="card space-y-4">
+                        <div className="flex items-start justify-between gap-3">
+                            <SectionTitle step={isGuest ? 3 : 2} title="חברי הקבוצה" text={`לפחות ${MIN_MEMBERS} חברים חוץ ממך. לכל חבר סיסמה זמנית, שהוא יחליף בכניסה הראשונה.`} />
+                            <span className="badge shrink-0 bg-brand-100 text-brand-700">{fields.length} חברים</span>
+                        </div>
 
-                <section className="card space-y-4">
-                    <div className="flex items-start justify-between gap-3">
-                        <SectionTitle step={isGuest ? 3 : 2} title="חברי הקבוצה" text={`לפחות ${MIN_MEMBERS} חברים חוץ ממך. לכל חבר סיסמה זמנית, שהוא יחליף בכניסה הראשונה.`} />
-                        <span className="badge shrink-0 bg-brand-100 text-brand-700">{fields.length} חברים</span>
+                        <ol className="space-y-3">
+                            {fields.map((field, index) => (
+                                <li key={field.id} className="pop-in rounded-2xl border border-slate-200 p-3 transition hover:border-brand-200 sm:p-4">
+                                    <div className="mb-2 flex items-center justify-between">
+                                        <span className="flex items-center gap-2 text-sm font-medium text-slate-600">
+                                            <span className={`grid size-7 place-items-center rounded-lg bg-linear-to-br text-xs font-bold text-white ${gradients[index % gradients.length]}`}>{index + 1}</span>
+                                            חבר {index + 1}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => remove(index)}
+                                            disabled={fields.length === 1 || mutation.isPending}
+                                            className="btn-ghost btn-sm text-slate-400 hover:text-rose-600"
+                                            aria-label={`הסרת חבר ${index + 1}`}
+                                        >
+                                            <Icon name="trash" className="size-4" />
+                                            הסרה
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <MemberFields
+                                            idPrefix={`member-${index}`}
+                                            fields={{
+                                                name: register(`members.${index}.name`, nameRules),
+                                                email: register(`members.${index}.email`, {
+                                                    ...emailRules,
+                                                    validate: (value, formValues) => {
+                                                        const email = normalizeEmail(value)
+                                                        const managerEmail = normalizeEmail(isGuest ? formValues.manager.email : user.email)
+                                                        if (email === managerEmail) return "זה המייל של המנהל. המנהל נוסף לקבוצה אוטומטית"
+                                                        const sameEmailCount = formValues.members.filter((member) => normalizeEmail(member.email) === email).length
+                                                        if (sameEmailCount > 1) return "המייל הזה כבר מופיע ברשימה"
+                                                        return true
+                                                    }
+                                                }),
+                                                password: register(`members.${index}.password`, newPasswordRules),
+                                            }}
+                                            errors={errors.members?.[index]}
+                                            disabled={mutation.isPending}
+                                        />
+                                    </div>
+                                </li>
+                            ))}
+                        </ol>
+
+                        {errors.members?.root?.message && <Alert>{errors.members.root.message}</Alert>}
+
+                        <button type="button" onClick={() => append(emptyMember)} disabled={mutation.isPending} className="btn-secondary w-full border-dashed">
+                            <Icon name="plus" className="size-4" />
+                            הוספת חבר
+                        </button>
+                    </section>
+
+                    {mutation.isError && (
+                        <Alert>
+                            {getErrorMessage(mutation.error)}
+                            {errorCode === "EMAIL_EXISTS_LOGIN_REQUIRED" && (
+                                <> <Link to="/login" className="font-bold underline">כניסה לאתר</Link>, ואז יוצרים את הקבוצה מהחשבון הקיים.</>
+                            )}
+                        </Alert>
+                    )}
+
+                    <div className="flex justify-end">
+                        <button type="submit" disabled={mutation.isPending} className="btn-primary px-8 py-3 text-base">
+                            {mutation.isPending ? "יוצר קבוצה..." : "יצירת הקבוצה"}
+                        </button>
                     </div>
+                </form>
 
-                    <ol className="space-y-3">
-                        {fields.map((field, index) => (
-                            <li key={field.id} className="rounded-lg border border-slate-200 p-3 sm:p-4">
-                                <div className="mb-2 flex items-center justify-between">
-                                    <span className="flex items-center gap-2 text-sm font-medium text-slate-600">
-                                        <span className="grid size-6 place-items-center rounded-full bg-slate-100 text-xs font-semibold text-slate-500">{index + 1}</span>
-                                        חבר {index + 1}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => remove(index)}
-                                        disabled={fields.length === 1 || mutation.isPending}
-                                        className="btn-ghost btn-sm text-slate-400 hover:text-rose-600"
-                                        aria-label={`הסרת חבר ${index + 1}`}
-                                    >
-                                        <Icon name="trash" className="size-4" />
-                                        הסרה
-                                    </button>
-                                </div>
-                                <div>
-                                    <MemberFields
-                                        idPrefix={`member-${index}`}
-                                        fields={{
-                                            name: register(`members.${index}.name`, nameRules),
-                                            email: register(`members.${index}.email`, {
-                                                ...emailRules,
-                                                validate: (value, formValues) => {
-                                                    const email = normalizeEmail(value)
-                                                    const managerEmail = normalizeEmail(isGuest ? formValues.manager.email : user.email)
-                                                    if (email === managerEmail) return "זה המייל של המנהל. המנהל נוסף לקבוצה אוטומטית"
-                                                    const sameEmailCount = formValues.members.filter((member) => normalizeEmail(member.email) === email).length
-                                                    if (sameEmailCount > 1) return "המייל הזה כבר מופיע ברשימה"
-                                                    return true
-                                                }
-                                            }),
-                                            password: register(`members.${index}.password`, newPasswordRules),
-                                        }}
-                                        errors={errors.members?.[index]}
-                                        disabled={mutation.isPending}
-                                    />
-                                </div>
-                            </li>
-                        ))}
-                    </ol>
-
-                    {errors.members?.root?.message && <Alert>{errors.members.root.message}</Alert>}
-
-                    <button type="button" onClick={() => append(emptyMember)} disabled={mutation.isPending} className="btn-secondary w-full border-dashed">
-                        <Icon name="plus" className="size-4" />
-                        הוספת חבר
-                    </button>
-                </section>
-
-                {mutation.isError && (
-                    <Alert>
-                        {getErrorMessage(mutation.error)}
-                        {errorCode === "EMAIL_EXISTS_LOGIN_REQUIRED" && (
-                            <> <Link to="/login" className="font-bold underline">כניסה לאתר</Link>, ואז יוצרים את הקבוצה מהחשבון הקיים.</>
-                        )}
-                    </Alert>
-                )}
-
-                <div className="flex justify-end">
-                    <button type="submit" disabled={mutation.isPending} className="btn-primary px-6">
-                        {mutation.isPending ? "יוצר קבוצה..." : "יצירת הקבוצה"}
-                    </button>
+                {/* עיצוב – לא לוגיקה */}
+                <div className="hidden lg:sticky lg:top-24 lg:block">
+                    <GroupPreview
+                        groupName={preview.groupName ?? ""}
+                        managerName={isGuest ? preview.manager?.name ?? "" : user.name}
+                        memberNames={(preview.members ?? []).map((member) => member?.name ?? "")}
+                    />
                 </div>
-            </form>
+            </div>
         </div>
     )
 }
@@ -189,7 +205,7 @@ interface SectionTitleProps {
 
 const SectionTitle = ({ step, title, text, link }: SectionTitleProps) => (
     <div className="flex items-start gap-3">
-        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700 ring-1 ring-brand-200">{step}</span>
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-linear-to-br from-brand-500 to-indigo-600 text-sm font-bold text-white shadow-md shadow-brand-600/30">{step}</span>
         <div>
             <h2 className="card-title">{title}</h2>
             {text && <p className="text-sm text-slate-500">{text}{link && <> <Link to="/login" className="link">להתחבר</Link>.</>}</p>}
