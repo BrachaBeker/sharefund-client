@@ -41,8 +41,7 @@ const CreateGroup = () => {
     })
     const { fields, append, remove } = useFieldArray({
         control,
-        name: "members",
-        rules: { minLength: { value: MIN_MEMBERS, message: `צריך לפחות ${MIN_MEMBERS} חברים חוץ מהמנהל` } }
+        name: "members"
     })
     // עיצוב – לא לוגיקה
     const preview = useWatch({ control })
@@ -125,7 +124,7 @@ const CreateGroup = () => {
                                         <button
                                             type="button"
                                             onClick={() => remove(index)}
-                                            disabled={fields.length === 1 || mutation.isPending}
+                                            disabled={fields.length <= MIN_MEMBERS || mutation.isPending}
                                             className="btn-ghost btn-sm text-slate-400 hover:text-rose-600"
                                             aria-label={`הסרת חבר ${index + 1}`}
                                         >
@@ -158,8 +157,6 @@ const CreateGroup = () => {
                                 </li>
                             ))}
                         </ol>
-
-                        {errors.members?.root?.message && <Alert>{errors.members.root.message}</Alert>}
 
                         <button type="button" onClick={() => append(emptyMember)} disabled={mutation.isPending} className="btn-secondary w-full border-dashed">
                             <Icon name="plus" className="size-4" />
